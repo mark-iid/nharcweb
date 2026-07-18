@@ -27,13 +27,15 @@ one-time steps to finish (GitHub CI + browser CMS login), how to switch the real
 
 The browser CMS and CI both need the repo on GitHub.
 
-1. **Create the repo.** Use a club org (e.g. `nharc`) or your account. Then:
+1. **Create the repo** on GitHub (a club org like `nharc`, or your account). The
+   local repo is **already initialized** with two branches — `main` (the dark
+   "signal" theme, currently live) and `classic-theme` (the light fallback). Push
+   both:
    ```bash
    cd ~/src/nharcweb
-   git init && git add -A && git commit -m "Initial NHARC website"
-   git branch -M main
    git remote add origin git@github.com:OWNER/nharcweb.git
    git push -u origin main
+   git push origin classic-theme
    ```
 2. **Make a deploy SSH key** (lets GitHub Actions rsync to the server):
    ```bash
@@ -142,6 +144,27 @@ and `public/files/W3EXW-Prologue.pdf` — not linked anywhere yet.
 2010–2019 entries). Say the word if you want any of it brought over or archived.
 
 ---
+
+## 6a. Themes — flip between the two looks
+
+The site ships with **two themes**, and you can switch the live site instantly:
+
+- **`signal`** — the dark, techy look with the animated waveform hero (currently live).
+- **`classic`** — the earlier light navy/white look.
+
+Both are kept as ready-built snapshots on the server (`/var/www/nharc-signal` and
+`/var/www/nharc-classic`), so switching is instant and needs **no rebuild**:
+
+```bash
+./deploy/flip-theme.sh classic   # switch live site to the light theme
+./deploy/flip-theme.sh signal    # switch back to the dark theme
+```
+
+The source for each lives on a git branch: **`main`** = signal, **`classic-theme`** =
+classic. `./deploy/deploy.sh` publishes `main` (signal) and refreshes the signal
+snapshot. If you decide you want `classic` permanently, tell me (or check out
+`classic-theme` and make it `main`) and we'll wire content edits to it; until then,
+the classic snapshot is a frozen fallback that won't pick up new content edits.
 
 ## 6. Members-only area (future)
 
