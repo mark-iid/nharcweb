@@ -14,8 +14,9 @@ license or upgrading an existing one.
 
 ## Fees
 
-- **$15** exam session fee
-- **$35** FCC application fee
+- **$15** exam session fee — cash, paid to the VE team at the session.
+- **$35** FCC application fee — for a new or upgraded license, paid **directly to the FCC**
+  through the CORES system after you pass (not collected at the session).
 
 ## Reserve your seat
 
@@ -31,4 +32,4 @@ encouraged. Arrive a few minutes early to complete paperwork.
   CORES website ahead of time.
 - If upgrading: the **original and a photocopy** of your current license or CSCE.
 - A **calculator** is permitted (no stored formulas). Bring a pen and pencils.
-- **Cash** for the exam and application fees.
+- **$15 in cash** for the exam session fee.

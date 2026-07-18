@@ -128,8 +128,9 @@ CMS or the data files) before this becomes the public site:
 - [x] **Raffle** — confirmed **still active** (Jul 2026); the Raffle page stays live.
       (If it later concludes, remove it from the nav in `src/components/Header.astro` /
       `Footer.astro` and delete `src/content/pages/raffle.md` + `src/pages/raffle.astro`.)
-- [ ] **VE testing details** — location, fees, and contact taken from the old page
-      (`src/content/pages/ve-testing.md`). Confirm still accurate.
+- [x] **VE testing details** — verified against the live old site (Jul 2026): 2nd Sat
+      at noon, Allison Park location, Bob Worek AG3U, $15 + $35 fees all still current.
+      Clarified that the $35 FCC fee is paid to the FCC via CORES, not at the session.
 - [ ] **Repeaters** — confirm all frequencies/tones/locations. The 444.35 D-STAR is
       now labeled **W3PGH B** at **Richland Township** (per your note + the 2019
       relocation) — confirm the location and the `B` module letter. Other W3PGH machine
