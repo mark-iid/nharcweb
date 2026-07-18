@@ -28,14 +28,13 @@ one-time steps to finish (GitHub CI + browser CMS login), how to switch the real
 The browser CMS and CI both need the repo on GitHub.
 
 1. **Create the repo** on GitHub (a club org like `nharc`, or your account). The
-   local repo is **already initialized** with two branches — `main` (the dark
-   "signal" theme, currently live) and `classic-theme` (the light fallback). Push
-   both:
+   local repo is **already initialized**: `main` (the live classic theme) and
+   `signal-theme` (the archived dark theme). Push both:
    ```bash
    cd ~/src/nharcweb
    git remote add origin git@github.com:OWNER/nharcweb.git
    git push -u origin main
-   git push origin classic-theme
+   git push origin signal-theme
    ```
 2. **Make a deploy SSH key** (lets GitHub Actions rsync to the server):
    ```bash
@@ -122,16 +121,19 @@ The site is on staging today. To make it the real site:
 Some of the old site's content was clearly dated. Please confirm and update (in the
 CMS or the data files) before this becomes the public site:
 
-- [ ] **Officers roster** — carried over from a 2014 page (`src/data/officers.json`).
-      Very likely out of date. Update to the current slate.
+- [x] **Officers roster** — updated to the 2026 elected slate (`src/data/officers.json`).
+      Note: several entries have first names only (Joe KC3ZUC, Nathan N3RTP, Sam KC3ZTO,
+      Mark KB3LYB) — add last names when handy. The old Board Chairman and Webmaster
+      entries were dropped (not in the election announcement); re-add if those roles exist.
 - [ ] **Raffle** — is the Icom IC-7300MK2 raffle still running? If it's over, remove
       the Raffle page from the nav (`src/components/Header.astro` / `Footer.astro`)
       and delete `src/content/pages/raffle.md` + `src/pages/raffle.astro`.
 - [ ] **VE testing details** — location, fees, and contact taken from the old page
       (`src/content/pages/ve-testing.md`). Confirm still accurate.
-- [ ] **Repeaters** — confirm all frequencies/tones/locations, especially the W3PGH
-      machines (location fields were blank on the old site) and whether 444.35 D-STAR
-      is at WQED or has moved.
+- [ ] **Repeaters** — confirm all frequencies/tones/locations. The 444.35 D-STAR is
+      now labeled **W3PGH B** at **Richland Township** (per your note + the 2019
+      relocation) — confirm the location and the `B` module letter. Other W3PGH machine
+      locations are still blank.
 - [ ] **Meeting format** — old site said business meetings are "currently virtual via
       Zoom." Confirm current in-person/Zoom status (`src/data/site.json`).
 - [ ] **Membership PDF** — `public/files/Membership-form.pdf` is the old form; replace
@@ -145,26 +147,16 @@ and `public/files/W3EXW-Prologue.pdf` — not linked anywhere yet.
 
 ---
 
-## 6a. Themes — flip between the two looks
+## 6a. Themes
 
-The site ships with **two themes**, and you can switch the live site instantly:
+The live site uses the **classic** light theme. A second, bolder **dark "signal"**
+theme (animated waveform hero, modernized gradient NHARC wordmark) is preserved on the
+**`signal-theme`** git branch to revisit later — likely without the animation.
 
-- **`signal`** — the dark, techy look with the animated waveform hero (currently live).
-- **`classic`** — the earlier light navy/white look.
-
-Both are kept as ready-built snapshots on the server (`/var/www/nharc-signal` and
-`/var/www/nharc-classic`), so switching is instant and needs **no rebuild**:
-
-```bash
-./deploy/flip-theme.sh classic   # switch live site to the light theme
-./deploy/flip-theme.sh signal    # switch back to the dark theme
-```
-
-The source for each lives on a git branch: **`main`** = signal, **`classic-theme`** =
-classic. `./deploy/deploy.sh` publishes `main` (signal) and refreshes the signal
-snapshot. If you decide you want `classic` permanently, tell me (or check out
-`classic-theme` and make it `main`) and we'll wire content edits to it; until then,
-the classic snapshot is a frozen fallback that won't pick up new content edits.
+- `main` (the active branch) = classic theme. All content edits go here, so the CMS and
+  every edit land on the live look automatically.
+- `signal-theme` = the dark theme, frozen. To preview or adopt it later, we'll rebase it
+  onto the current content and deploy.
 
 ## 6. Members-only area (future)
 

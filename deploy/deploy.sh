@@ -20,10 +20,4 @@ rsync -az --delete \
   --exclude='.well-known' \
   dist/ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
 
-# Keep the "signal" snapshot in sync so flip-theme.sh can restore this build.
-# (main = the signal theme; the classic snapshot is a frozen fallback.)
-echo "==> Refreshing signal snapshot"
-ssh "${DEPLOY_USER}@${DEPLOY_HOST}" \
-  "rsync -a --delete ${DEPLOY_PATH}/ ${DEPLOY_PATH}-signal/"
-
 echo "==> Done. https://${DEPLOY_HOST}/"
