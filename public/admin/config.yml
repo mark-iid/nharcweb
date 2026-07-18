@@ -7,7 +7,7 @@
 
 backend:
   name: github
-  repo: OWNER/nharcweb          # <-- change to your GitHub org/repo, e.g. nharc/nharcweb
+  repo: mark-iid/nharcweb
   branch: main
   # base_url: https://your-oauth-relay.example.com   # only if self-hosting the OAuth relay
 
