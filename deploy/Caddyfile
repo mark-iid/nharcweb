@@ -7,11 +7,22 @@
 newweb.nharc.org {
 	root * /var/www/nharc
 	encode zstd gzip
-	file_server
 
-	# Long-cache the immutable hashed assets Astro emits under /_astro/.
-	@astro path /_astro/*
-	header @astro Cache-Control "public, max-age=31536000, immutable"
+	# CMS "Sign In with GitHub" OAuth relay (nharc-oauth.service on :8402).
+	handle /auth* {
+		reverse_proxy 127.0.0.1:8402
+	}
+	handle /callback* {
+		reverse_proxy 127.0.0.1:8402
+	}
+
+	# Static site.
+	handle {
+		# Long-cache the immutable hashed assets Astro emits under /_astro/.
+		@astro path /_astro/*
+		header @astro Cache-Control "public, max-age=31536000, immutable"
+		file_server
+	}
 
 	# Friendly 404 page.
 	handle_errors {

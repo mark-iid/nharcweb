@@ -9,7 +9,9 @@ backend:
   name: github
   repo: mark-iid/nharcweb
   branch: main
-  # base_url: https://your-oauth-relay.example.com   # only if self-hosting the OAuth relay
+  # Self-hosted OAuth relay (nharc-oauth.service, proxied by Caddy at /auth + /callback).
+  base_url: https://newweb.nharc.org
+  auth_endpoint: /auth
 
 # Where images uploaded through the CMS are stored / referenced.
 media_folder: public/images
