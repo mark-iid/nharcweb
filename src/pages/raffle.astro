@@ -1,0 +1,16 @@
+---
+import { getEntry, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+
+const entry = await getEntry('pages', 'raffle');
+const { Content } = await render(entry!);
+---
+<BaseLayout title="Club Raffle" description={entry!.data.description}>
+  <PageHeader title="Club Raffle" sub="Win an Icom IC-7300MK2 — only 300 tickets at $10 each." />
+  <div class="wrap">
+    <div class="prose">
+      <Content />
+    </div>
+  </div>
+</BaseLayout>

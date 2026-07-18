@@ -1,0 +1,150 @@
+# Sveltia CMS configuration for the NHARC website.
+# Docs: https://github.com/sveltia/sveltia-cms
+#
+# Before this editor can save changes, complete the one-time backend setup in
+# HANDOFF.md:  (1) push this repo to GitHub, (2) set `repo` below to the real
+# org/name, (3) wire up a GitHub OAuth app so editors can log in.
+
+backend:
+  name: github
+  repo: OWNER/nharcweb          # <-- change to your GitHub org/repo, e.g. nharc/nharcweb
+  branch: main
+  # base_url: https://your-oauth-relay.example.com   # only if self-hosting the OAuth relay
+
+# Where images uploaded through the CMS are stored / referenced.
+media_folder: public/images
+public_folder: /images
+
+# Show a live preview link in the editor.
+site_url: https://newweb.nharc.org
+display_url: https://newweb.nharc.org
+
+collections:
+  # ---------- Site-wide settings ----------
+  - name: settings
+    label: Site Settings
+    files:
+      - name: site
+        label: Club Info & Schedule
+        file: src/data/site.json
+        format: json
+        fields:
+          - { name: clubName, label: Club name, widget: string }
+          - { name: shortName, label: Short name, widget: string }
+          - { name: callsign, label: Callsign, widget: string }
+          - { name: tagline, label: Tagline, widget: text }
+          - { name: email, label: General email, widget: string }
+          - { name: bankEmail, label: Zelle / dues email, widget: string }
+          - { name: veEmail, label: VE testing email, widget: string }
+          - name: mailingAddress
+            label: Mailing address
+            widget: object
+            fields:
+              - { name: line1, label: PO Box / street, widget: string }
+              - { name: city, label: City, widget: string }
+              - { name: state, label: State, widget: string }
+              - { name: zip, label: ZIP, widget: string }
+          - { name: facebook, label: Facebook URL, widget: string }
+          - name: meetingVenue
+            label: Meeting venue
+            widget: object
+            fields:
+              - { name: name, label: Venue name, widget: string }
+              - { name: address, label: Address, widget: string }
+              - { name: parking, label: Parking note, widget: text }
+          - name: meetings
+            label: Meeting schedule
+            widget: object
+            fields:
+              - { name: business, label: Business meeting, widget: text }
+              - { name: activities, label: Activities meeting, widget: text }
+          - { name: membershipDues, label: Membership dues, widget: string }
+          - { name: breakfast, label: Breakfast note, widget: text }
+
+  # ---------- Repeaters ----------
+  - name: repeaters
+    label: Repeaters
+    files:
+      - name: repeaters
+        label: Repeater list
+        file: src/data/repeaters.json
+        format: json
+        fields:
+          - name: repeaters
+            label: Repeaters
+            widget: list
+            fields:
+              - { name: frequency, label: Frequency (MHz), widget: string }
+              - { name: callsign, label: Callsign, widget: string }
+              - { name: band, label: Band, widget: string, required: false }
+              - { name: mode, label: Mode, widget: string, required: false }
+              - { name: tone, label: Tone, widget: string, required: false }
+              - { name: power, label: Power, widget: string, required: false }
+              - { name: location, label: Location, widget: string, required: false }
+              - { name: notes, label: Notes, widget: text, required: false }
+
+  # ---------- Nets ----------
+  - name: nets
+    label: Nets
+    files:
+      - name: nets
+        label: Net schedule
+        file: src/data/nets.json
+        format: json
+        fields:
+          - name: nets
+            label: Nets
+            widget: list
+            fields:
+              - { name: name, label: Net name, widget: string }
+              - { name: day, label: Day, widget: string }
+              - { name: time, label: Time, widget: string }
+              - { name: repeater, label: Repeater / where, widget: string }
+              - { name: extra, label: Extra info, widget: string, required: false }
+              - { name: notes, label: Notes, widget: text, required: false }
+
+  # ---------- Officers ----------
+  - name: officers
+    label: Officers
+    files:
+      - name: officers
+        label: Officer roster
+        file: src/data/officers.json
+        format: json
+        fields:
+          - name: officers
+            label: Officers
+            widget: list
+            fields:
+              - { name: role, label: Position, widget: string }
+              - { name: name, label: Name, widget: string }
+              - { name: callsign, label: Callsign, widget: string }
+
+  # ---------- Editable pages (prose) ----------
+  - name: pages
+    label: Pages
+    folder: src/content/pages
+    format: frontmatter
+    extension: md
+    create: false
+    identifier_field: title
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: description, label: SEO description, widget: text, required: false }
+      - { name: body, label: Body, widget: markdown }
+
+  # ---------- News / announcements ----------
+  - name: news
+    label: News
+    folder: src/content/news
+    format: frontmatter
+    extension: md
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    identifier_field: title
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: date, label: Date, widget: datetime }
+      - { name: summary, label: Summary, widget: text, required: false }
+      - { name: draft, label: Draft, widget: boolean, default: false }
+      - { name: body, label: Body, widget: markdown }

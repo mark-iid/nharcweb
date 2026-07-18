@@ -1,0 +1,94 @@
+{
+  "repeaters": [
+    {
+      "frequency": "147.090",
+      "callsign": "W3EXW",
+      "band": "2 m",
+      "mode": "Analog FM",
+      "tone": "88.5 Hz",
+      "power": "100 W",
+      "location": "WPXI TV-11",
+      "notes": "Flagship repeater. Antenna 300 ft up the tower, ~1500 ft elevation."
+    },
+    {
+      "frequency": "146.880",
+      "callsign": "W3EXW",
+      "band": "2 m",
+      "mode": "Analog FM",
+      "tone": "88.5 Hz",
+      "power": "120 W",
+      "location": "WQED TV-13",
+      "notes": "One of the oldest repeaters in Pittsburgh. Antenna 250 ft up, ~1400 ft elevation. Weekly-net backup machine."
+    },
+    {
+      "frequency": "146.820",
+      "callsign": "W3EXW C",
+      "band": "2 m",
+      "mode": "Analog / D-STAR",
+      "tone": "88.5 Hz",
+      "power": "",
+      "location": "WQED-TV, Oakland",
+      "notes": "Hosts the Western PA D-STAR net; links to REF063C. Shares infrastructure with the 444.35 D-STAR machine."
+    },
+    {
+      "frequency": "444.400",
+      "callsign": "W3EXW",
+      "band": "70 cm",
+      "mode": "Analog FM",
+      "tone": "88.5 Hz",
+      "power": "75 W",
+      "location": "WPXI TV-11",
+      "notes": "Oldest 440 repeater in Pittsburgh. Roof mounted, ~1200 ft elevation."
+    },
+    {
+      "frequency": "444.350",
+      "callsign": "W3PGH B",
+      "band": "70 cm",
+      "mode": "D-STAR",
+      "tone": "",
+      "power": "",
+      "location": "Richland Township",
+      "notes": "D-STAR digital voice. RX 444.350 / TX 449.350 (+5 MHz)."
+    },
+    {
+      "frequency": "224.100",
+      "callsign": "W3EXW",
+      "band": "1.25 m",
+      "mode": "Analog FM",
+      "tone": "88.5 Hz",
+      "power": "40 W",
+      "location": "Richland Township",
+      "notes": "The club's smallest repeater. Bridgecom equipment."
+    },
+    {
+      "frequency": "146.610",
+      "callsign": "W3PGH",
+      "band": "2 m",
+      "mode": "Analog FM",
+      "tone": "131.8 Hz",
+      "power": "",
+      "location": "",
+      "notes": ""
+    },
+    {
+      "frequency": "223.980",
+      "callsign": "W3PGH",
+      "band": "1.25 m",
+      "mode": "Analog FM",
+      "tone": "131.8 Hz",
+      "power": "",
+      "location": "",
+      "notes": ""
+    },
+    {
+      "frequency": "444.950",
+      "callsign": "W3PGH",
+      "band": "70 cm",
+      "mode": "Analog FM",
+      "tone": "131.8 Hz",
+      "power": "",
+      "location": "",
+      "notes": ""
+    }
+  ]
+}

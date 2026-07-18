@@ -1,0 +1,43 @@
+---
+import Wordmark from './Wordmark.astro';
+import site from '../data/site.json';
+
+const nav = [
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
+  { href: '/repeaters', label: 'Repeaters' },
+  { href: '/nets', label: 'Nets' },
+  { href: '/meetings', label: 'Meetings' },
+  { href: '/ve-testing', label: 'Testing' },
+  { href: '/dstar', label: 'D-STAR' },
+  { href: '/membership', label: 'Membership' },
+  { href: '/contact', label: 'Contact' },
+];
+
+// Normalize the current path (strip trailing slash) for active-link matching.
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+---
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/" aria-label={`${site.clubName} home`}>
+      <Wordmark height={30} />
+      <span class="brand-call">{site.callsign}</span>
+    </a>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" data-nav-toggle>☰ Menu</button>
+    <nav class="nav" data-nav aria-label="Primary">
+      {nav.map((item) => {
+        const target = item.href.replace(/\/+$/, '') || '/';
+        const current = target === '/' ? path === '/' : path === target || path.startsWith(target + '/');
+        return <a href={item.href} aria-current={current ? 'page' : undefined}>{item.label}</a>;
+      })}
+    </nav>
+  </div>
+</header>
+<script>
+  const toggle = document.querySelector('[data-nav-toggle]');
+  const nav = document.querySelector('[data-nav]');
+  toggle?.addEventListener('click', () => {
+    const open = nav?.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+</script>

@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import repeaterData from '../data/repeaters.json';
+
+const repeaters = repeaterData.repeaters;
+const w3exw = repeaters.filter((r) => r.callsign.startsWith('W3EXW'));
+const w3pgh = repeaters.filter((r) => r.callsign.startsWith('W3PGH'));
+---
+<BaseLayout title="Repeaters" description="NHARC repeater frequencies, tones, and locations across Greater Pittsburgh.">
+  <PageHeader title="Repeaters" sub="Our machines run 24/7 with tone squelch. Emergency traffic takes priority at all times." />
+  <div class="wrap">
+    <h2 style="margin-top:0;">W3EXW</h2>
+    <div class="table-scroll">
+      <table class="data">
+        <thead>
+          <tr><th>Frequency</th><th>Band</th><th>Mode</th><th>Tone</th><th>Power</th><th>Location</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          {w3exw.map((r) => (
+            <tr>
+              <td class="freq">{r.frequency}</td>
+              <td>{r.band}</td>
+              <td>{r.mode}</td>
+              <td>{r.tone || '—'}</td>
+              <td>{r.power || '—'}</td>
+              <td>{r.location || '—'}</td>
+              <td>{r.notes || '—'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <h2>W3PGH</h2>
+    <div class="table-scroll">
+      <table class="data">
+        <thead>
+          <tr><th>Frequency</th><th>Band</th><th>Mode</th><th>Tone</th><th>Location</th></tr>
+        </thead>
+        <tbody>
+          {w3pgh.map((r) => (
+            <tr>
+              <td class="freq">{r.frequency}</td>
+              <td>{r.band}</td>
+              <td>{r.mode}</td>
+              <td>{r.tone || '—'}</td>
+              <td>{r.location || '—'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout info">
+      <p>
+        All repeaters use a <strong>transmit tone of 88.5 Hz (W3EXW)</strong> or
+        <strong>131.8 Hz (W3PGH)</strong>. For D-STAR programming details, see the
+        <a href="/dstar">D-STAR page</a>.
+      </p>
+    </div>
+  </div>
+</BaseLayout>

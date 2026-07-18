@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import site from '../data/site.json';
+---
+<BaseLayout title="Contact" description="How to reach the North Hills Amateur Radio Club.">
+  <PageHeader title="Contact Us" sub="Questions about the club, membership, or getting licensed? Get in touch." />
+  <div class="wrap">
+    <div class="grid cols-2">
+      <div class="card">
+        <h3>General inquiries</h3>
+        <dl class="deflist">
+          <dt>Email</dt>
+          <dd><a href={`mailto:${site.email}`}>{site.email}</a></dd>
+          <dt>Mail</dt>
+          <dd>
+            {site.clubName}<br />
+            {site.mailingAddress.line1}<br />
+            {site.mailingAddress.city}, {site.mailingAddress.state} {site.mailingAddress.zip}
+          </dd>
+          <dt>Facebook</dt>
+          <dd><a href={site.facebook} rel="noopener">@nharc.w3exw</a></dd>
+        </dl>
+      </div>
+      <div class="card">
+        <h3>Specific topics</h3>
+        <dl class="deflist">
+          <dt>License testing</dt>
+          <dd><a href={`mailto:${site.veEmail}`}>{site.veEmail}</a> (Bob Worek, AG3U)</dd>
+          <dt>Dues / payments</dt>
+          <dd><a href={`mailto:${site.bankEmail}`}>{site.bankEmail}</a> (Zelle)</dd>
+          <dt>Meetings</dt>
+          <dd><a href="/meetings">Schedule &amp; location</a></dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 1.8rem;">
+      <p>
+        <strong>Come say hello on the air.</strong> Check into the
+        <a href="/nets">Tuesday club net</a> at 8:30 PM on the 147.09 repeater — a friendly
+        way to meet members before your first meeting.
+      </p>
+    </div>
+  </div>
+</BaseLayout>

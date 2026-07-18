@@ -1,0 +1,41 @@
+---
+import site from '../data/site.json';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div>
+      <h4>{site.clubName}</h4>
+      <p>
+        {site.mailingAddress.line1}<br />
+        {site.mailingAddress.city}, {site.mailingAddress.state} {site.mailingAddress.zip}
+      </p>
+      <p>
+        <a href={`mailto:${site.email}`}>{site.email}</a><br />
+        <a href={site.facebook} rel="noopener">Facebook — @nharc.w3exw</a>
+      </p>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="/about">About the Club</a></li>
+        <li><a href="/repeaters">Repeaters</a></li>
+        <li><a href="/nets">Nets &amp; Schedule</a></li>
+        <li><a href="/dstar">D-STAR</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Get Involved</h4>
+      <ul>
+        <li><a href="/meetings">Meetings</a></li>
+        <li><a href="/ve-testing">License Testing</a></li>
+        <li><a href="/membership">Join / Renew</a></li>
+        <li><a href="/contact">Contact Us</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>&copy; {year} {site.clubName} &middot; <span class="callsign">{site.callsign}</span></span>
+    <span>Greater Pittsburgh, Pennsylvania</span>
+  </div>
+</footer>

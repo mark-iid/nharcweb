@@ -1,0 +1,39 @@
+---
+import { getEntry, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import officerData from '../data/officers.json';
+const officers = officerData.officers;
+
+const entry = await getEntry('pages', 'about');
+const { Content } = await render(entry!);
+---
+<BaseLayout title="About" description={entry!.data.description}>
+  <PageHeader title="About the Club" sub="Amateur radio in Greater Pittsburgh." />
+  <div class="wrap">
+    <div class="prose">
+      <Content />
+    </div>
+
+    <h2>Club Officers</h2>
+    <div class="callout info">
+      <p><strong>Note:</strong> officer roster carried over from the previous site — please verify and update the current officers.</p>
+    </div>
+    <div class="table-scroll">
+      <table class="data">
+        <thead>
+          <tr><th>Position</th><th>Name</th><th>Callsign</th></tr>
+        </thead>
+        <tbody>
+          {officers.map((o) => (
+            <tr>
+              <td>{o.role}</td>
+              <td>{o.name}</td>
+              <td class="callsign">{o.callsign}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</BaseLayout>

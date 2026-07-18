@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import site from '../data/site.json';
+import netData from '../data/nets.json';
+const nets = netData.nets;
+---
+<BaseLayout>
+  <section class="hero">
+    <svg class="hero-wave" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="signalGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#24d3e6" />
+          <stop offset="0.55" stop-color="#4aa8ff" />
+          <stop offset="1" stop-color="#ff8a3d" />
+        </linearGradient>
+      </defs>
+      <line class="baseline" x1="0" y1="150" x2="1200" y2="150" />
+      <path class="wave-echo sweep-slow" d="M -240 158 q 60 -32 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0" />
+      <path class="wave-main sweep" d="M -240 150 q 60 -52 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0 t 120 0" />
+    </svg>
+    <div class="wrap">
+      <p class="eyebrow"><span class="call">{site.callsign}</span> &middot; Greater Pittsburgh</p>
+      <h1>North Hills Amateur Radio Club</h1>
+      <p class="lede">
+        Fellowship, opportunities to learn and grow, activities throughout the year, and a
+        series of repeaters across Greater Pittsburgh. New and prospective hams are always welcome.
+      </p>
+      <div class="btn-row">
+        <a class="btn" href="/membership">Join the Club</a>
+        <a class="btn secondary" href="/meetings">Meeting Schedule</a>
+        <a class="btn secondary" href="/repeaters">Our Repeaters</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="grid cols-3" style="margin: 2.2rem 0;">
+      <div class="card">
+        <span class="icon">📻</span>
+        <h3>Repeaters</h3>
+        <p>A robust network of 2 m, 1.25 m, and 70 cm machines — analog and D-STAR — covering the region 24/7.</p>
+        <p><a href="/repeaters">See frequencies &amp; tones →</a></p>
+      </div>
+      <div class="card">
+        <span class="icon">🗣️</span>
+        <h3>Weekly Nets</h3>
+        <p>Check in with the club on the air. Our voice net runs every Tuesday and the D-STAR net every Monday.</p>
+        <p><a href="/nets">Net schedule →</a></p>
+      </div>
+      <div class="card">
+        <span class="icon">📝</span>
+        <h3>License Testing</h3>
+        <p>VE exam sessions on the second Saturday of each month for new and upgrading hams.</p>
+        <p><a href="/ve-testing">Testing details →</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-soft">
+    <div class="wrap section-soft-inner">
+      <div class="grid cols-2">
+        <div>
+          <h2 style="margin-top:0;">Meetings</h2>
+          <p><strong>Business meeting</strong> — {site.meetings.business}</p>
+          <p><strong>Activities meeting</strong> — {site.meetings.activities}</p>
+          <p>
+            In-person meetings are held at <strong>{site.meetingVenue.name}</strong>,
+            {site.meetingVenue.address}. {site.meetingVenue.parking}
+          </p>
+          <p><a class="btn ghost" href="/meetings">More about meetings</a></p>
+        </div>
+        <div>
+          <h2 style="margin-top:0;">On the Air This Week</h2>
+          {nets.map((net) => (
+            <p>
+              <strong>{net.name}</strong> — {net.day} at {net.time}<br />
+              <span class="callsign">{net.repeater}</span>
+            </p>
+          ))}
+          <p><a class="btn ghost" href="/nets">Full net schedule</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap" style="margin-top: 2.4rem;">
+    <div class="callout">
+      <p>
+        <strong>☕ Club breakfast.</strong> {site.breakfast} Come hang out — all are welcome, no reservation needed.
+      </p>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,27 @@
+{
+  "clubName": "North Hills Amateur Radio Club",
+  "shortName": "NHARC",
+  "callsign": "W3EXW",
+  "tagline": "Amateur radio in Greater Pittsburgh since the earliest days of the hobby.",
+  "email": "info@nharc.org",
+  "bankEmail": "bank@nharc.org",
+  "veEmail": "ve@nharc.org",
+  "mailingAddress": {
+    "line1": "P.O. Box 15333",
+    "city": "Pittsburgh",
+    "state": "PA",
+    "zip": "15237"
+  },
+  "facebook": "https://www.facebook.com/nharc.w3exw",
+  "meetingVenue": {
+    "name": "Hackers Guild",
+    "address": "2247 Babcock Blvd, Pittsburgh, PA 15237",
+    "parking": "Parking is available in front of the building and across the street."
+  },
+  "meetings": {
+    "business": "2nd Wednesday of each month (January–November), 7:00 PM — currently held virtually via Zoom.",
+    "activities": "4th Wednesday of each month (except November & December), 7:00 PM."
+  },
+  "membershipDues": "$25 / year",
+  "breakfast": "Informal club breakfast on the 2nd Saturday of each month at 8:30 AM sharp — Bob Evans on McKnight Road near Ross Park Mall."
+}

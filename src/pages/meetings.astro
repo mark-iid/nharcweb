@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import site from '../data/site.json';
+---
+<BaseLayout title="Meetings" description="NHARC meeting schedule and location.">
+  <PageHeader title="Meetings" sub="Two meetings a month, plus an informal breakfast — come get to know the club." />
+  <div class="wrap">
+    <div class="grid cols-2">
+      <div class="card">
+        <span class="icon">📋</span>
+        <h3>Business Meeting</h3>
+        <p>{site.meetings.business}</p>
+      </div>
+      <div class="card">
+        <span class="icon">🎉</span>
+        <h3>Activities Meeting</h3>
+        <p>{site.meetings.activities}</p>
+      </div>
+    </div>
+
+    <h2>Where we meet</h2>
+    <p>
+      In-person meetings are held at <strong>{site.meetingVenue.name}</strong> —
+      {site.meetingVenue.address}. {site.meetingVenue.parking}
+    </p>
+    <p>
+      Business meetings are currently held virtually via <strong>Zoom</strong>. For the meeting
+      link or the current schedule, email <a href={`mailto:${site.email}`}>{site.email}</a>.
+    </p>
+
+    <div class="callout">
+      <p><strong>☕ Club breakfast.</strong> {site.breakfast}</p>
+    </div>
+  </div>
+</BaseLayout>

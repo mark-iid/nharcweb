@@ -1,0 +1,12 @@
+{
+  "officers": [
+    { "role": "President", "name": "Ed DeHart", "callsign": "WA3YOA" },
+    { "role": "Vice President", "name": "Eric Fowler", "callsign": "WV3E" },
+    { "role": "Secretary", "name": "Tim Colbert", "callsign": "K3HX" },
+    { "role": "Treasurer", "name": "John Fowler", "callsign": "KB3YBS" },
+    { "role": "Activities Director", "name": "Ron Frank", "callsign": "K3WJL" },
+    { "role": "Equipment Trustee", "name": "Stephen Zelenko", "callsign": "N3ZX" },
+    { "role": "Board Chairman", "name": "Cathy Heiles", "callsign": "KB3OYS" },
+    { "role": "Webmaster", "name": "Chris Hyatt", "callsign": "KB3NPA" }
+  ]
+}

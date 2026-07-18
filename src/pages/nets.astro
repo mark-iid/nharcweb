@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import netData from '../data/nets.json';
+const nets = netData.nets;
+---
+<BaseLayout title="Nets" description="Weekly NHARC nets — check in on the air with the club.">
+  <PageHeader title="Nets & On-Air Schedule" sub="Checking into a net is the easiest way to get on the air and meet the club." />
+  <div class="wrap">
+    <div class="grid cols-2">
+      {nets.map((net) => (
+        <div class="card">
+          <span class="pill">{net.day}s · {net.time}</span>
+          <h3>{net.name}</h3>
+          <p><strong>Where:</strong> <span class="callsign">{net.repeater}</span></p>
+          {net.extra && <p>{net.extra}</p>}
+          <p>{net.notes}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="callout" style="margin-top: 1.8rem;">
+      <p>
+        <strong>Everyone is welcome</strong> — you do not need to be a member to check in.
+        Newly licensed? A net is a friendly, low-pressure place to make your first contacts.
+      </p>
+    </div>
+  </div>
+</BaseLayout>
