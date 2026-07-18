@@ -125,9 +125,9 @@ CMS or the data files) before this becomes the public site:
       Note: several entries have first names only (Joe KC3ZUC, Nathan N3RTP, Sam KC3ZTO,
       Mark KB3LYB) — add last names when handy. The old Board Chairman and Webmaster
       entries were dropped (not in the election announcement); re-add if those roles exist.
-- [ ] **Raffle** — is the Icom IC-7300MK2 raffle still running? If it's over, remove
-      the Raffle page from the nav (`src/components/Header.astro` / `Footer.astro`)
-      and delete `src/content/pages/raffle.md` + `src/pages/raffle.astro`.
+- [x] **Raffle** — confirmed **still active** (Jul 2026); the Raffle page stays live.
+      (If it later concludes, remove it from the nav in `src/components/Header.astro` /
+      `Footer.astro` and delete `src/content/pages/raffle.md` + `src/pages/raffle.astro`.)
 - [ ] **VE testing details** — location, fees, and contact taken from the old page
       (`src/content/pages/ve-testing.md`). Confirm still accurate.
 - [ ] **Repeaters** — confirm all frequencies/tones/locations. The 444.35 D-STAR is
