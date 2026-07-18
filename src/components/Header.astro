@@ -1,5 +1,5 @@
 ---
-import Wordmark from './Wordmark.astro';
+import Logo from './Logo.astro';
 import site from '../data/site.json';
 
 const nav = [
@@ -19,9 +19,12 @@ const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
 ---
 <header class="site-header">
   <div class="wrap header-inner">
-    <a class="brand" href="/" aria-label={`${site.clubName} home`}>
-      <Wordmark height={30} />
-      <span class="brand-call">{site.callsign}</span>
+    <a class="brand" href="/">
+      <Logo size={42} />
+      <span class="brand-text">
+        <span class="brand-name">{site.shortName}</span>
+        <span class="brand-call">{site.callsign}</span>
+      </span>
     </a>
     <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" data-nav-toggle>☰ Menu</button>
     <nav class="nav" data-nav aria-label="Primary">
