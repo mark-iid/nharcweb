@@ -53,32 +53,35 @@ The browser CMS and CI both need the repo on GitHub.
 
 ---
 
-## 3. Turn on the browser CMS (Sveltia) login
+## 3. Browser CMS (Sveltia) login — DONE
 
-The editor lives at **/admin/**. It commits edits to GitHub; Actions then rebuilds
-and deploys. Editors need a (free) GitHub account with write access to the repo.
+The editor lives at **/admin/**. It commits edits to `main`; Actions rebuilds and
+deploys (~30 s). Editors need a GitHub account with write access to `mark-iid/nharcweb`.
+`config.yml` already points at the repo. Two ways to sign in:
 
-First, set the repo in **`public/admin/config.yml`**:
-```yaml
-backend:
-  name: github
-  repo: OWNER/nharcweb   # <-- your real org/repo
-  branch: main
-```
+- **Access Token** (works today): on the login screen choose *"Sign In Using Access
+  Token"* and paste a fine-grained PAT (repo = `mark-iid/nharcweb`, Contents:
+  read/write). No infra needed — good for one or two maintainers.
+- **"Sign In with GitHub"** (one-click, nicer for multiple editors): backed by a
+  **self-hosted OAuth relay** on this box — see below.
 
-Then pick a login method:
+### The self-hosted OAuth relay
+A tiny stdlib-Python relay (`deploy/oauth-relay.py`) runs as **`nharc-oauth.service`**
+on `127.0.0.1:8402`, reverse-proxied by Caddy at `/auth` and `/callback`. It's fully
+set up **except** the GitHub OAuth App credentials, which you create once:
 
-- **Simplest — Personal Access Token.** Sveltia lets each editor sign in with a
-  GitHub fine-grained PAT (scoped to this repo, Contents: read/write). No server to
-  run. Good for 1–3 maintainers. Share these one-time setup instructions with each
-  editor; nothing else to configure.
-- **Nicer — GitHub OAuth ("Sign in with GitHub" button).** Stand up the small
-  `sveltia-cms-auth` relay (a free Cloudflare Worker) and create a GitHub OAuth App;
-  set the Worker URL as `base_url` in `config.yml`. See
-  https://github.com/sveltia/sveltia-cms#readme. Worth it if several people edit.
-
-Commit the `config.yml` change and push. Test at
-`https://newweb.nharc.org/admin/`.
+1. **Create the OAuth App:** GitHub → Settings → Developer settings → **OAuth Apps** →
+   New OAuth App.
+   - Homepage URL: `https://newweb.nharc.org`
+   - Authorization callback URL: `https://newweb.nharc.org/callback`
+   - Register, copy the **Client ID**, then **Generate a client secret** and copy it.
+2. **Put the credentials on the server** (secret stays off any chat/log):
+   ```bash
+   ssh mark@newweb.nharc.org 'sudo nano /etc/nharc-oauth.env'   # replace the two REPLACE_ME lines
+   ssh mark@newweb.nharc.org 'sudo systemctl restart nharc-oauth'
+   ```
+   Then "Sign In with GitHub" at `/admin/` works. Manage the service with
+   `systemctl status|restart nharc-oauth` and `journalctl -u nharc-oauth`.
 
 ---
 
@@ -108,7 +111,12 @@ The site is on staging today. To make it the real site:
    DNS TTL a day ahead for a quick, reversible switch.
 3. **Update the canonical URL.** In `astro.config.mjs` set `site: 'https://nharc.org'`
    and in `public/robots.txt` update the sitemap URL. Rebuild/redeploy.
-4. Keep `newweb.nharc.org` working as-is (it's in the Caddy block), so you can still
+4. **Update the CMS OAuth for the new domain** (if you set it up, §3): change
+   `base_url` in `public/admin/config.yml` to `https://nharc.org`, update the OAuth
+   App's callback URL to `https://nharc.org/callback`, and set `REDIRECT_URI` /
+   `ALLOWED_ORIGIN` in `/etc/nharc-oauth.env` to the new domain, then
+   `sudo systemctl restart nharc-oauth`.
+5. Keep `newweb.nharc.org` working as-is (it's in the Caddy block), so you can still
    preview.
 
 > The old site is hosted externally at pageone.net (`66.207.128.24`). Nothing on
