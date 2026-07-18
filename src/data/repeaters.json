@@ -8,7 +8,7 @@
       "tone": "88.5 Hz",
       "power": "100 W",
       "location": "WPXI TV-11",
-      "notes": "Flagship repeater. Antenna 300 ft up the tower, ~1500 ft elevation."
+      "notes": "Flagship repeater. Antenna 300 ft up the tower, ~1500 ft elevation. Also on EchoLink — node 885999 (W3EXW-R)."
     },
     {
       "frequency": "146.880",
@@ -58,7 +58,7 @@
       "tone": "88.5 Hz",
       "power": "40 W",
       "location": "Richland Township",
-      "notes": "The club's smallest repeater. Bridgecom equipment."
+      "notes": "The club's smallest repeater. Bridgecom equipment. On AllStarLink, linked with the W3PGH 223.98 machine."
     },
     {
       "frequency": "146.610",
@@ -78,7 +78,7 @@
       "tone": "131.8 Hz",
       "power": "",
       "location": "",
-      "notes": ""
+      "notes": "On AllStarLink, linked with the W3EXW 224.10 machine."
     },
     {
       "frequency": "444.950",
