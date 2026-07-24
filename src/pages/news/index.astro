@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+
+const posts = (await getCollection('news', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+---
+<BaseLayout title="News" description="News and announcements from the North Hills Amateur Radio Club.">
+  <PageHeader title="News" sub="Announcements and updates from the club." />
+  <div class="wrap">
+    {posts.length === 0 && <p>No news yet — check back soon.</p>}
+    {posts.map((post) => (
+      <article class="card" style="margin-bottom: 1.1rem;">
+        <span class="pill">{fmt(post.data.date)}</span>
+        <h3 style="margin: 0.5rem 0 0.4rem;">
+          <a href={`/news/${post.id}`}>{post.data.title}</a>
+        </h3>
+        {post.data.summary && <p>{post.data.summary}</p>}
+        <p style="margin-bottom: 0;"><a href={`/news/${post.id}`}>Read more →</a></p>
+      </article>
+    ))}
+  </div>
+</BaseLayout>
