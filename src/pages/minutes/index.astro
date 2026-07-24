@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+
+const items = (await getCollection('minutes', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+---
+<BaseLayout title="Meeting Minutes" description="Minutes from NHARC business and activities meetings.">
+  <PageHeader title="Meeting Minutes" sub="A record of the club's business and activities meetings." />
+  <div class="wrap">
+    {items.length === 0 && <p>No minutes posted yet.</p>}
+    {items.map((m) => (
+      <article class="card" style="margin-bottom: 1.1rem;">
+        <span class="pill">{fmt(m.data.date)} &middot; {m.data.meeting}</span>
+        <h3 style="margin: 0.5rem 0 0.4rem;">
+          <a href={`/minutes/${m.id}`}>{m.data.title ?? `${m.data.meeting} Meeting Minutes`}</a>
+        </h3>
+        <p style="margin-bottom: 0;"><a href={`/minutes/${m.id}`}>Read →</a></p>
+      </article>
+    ))}
+  </div>
+</BaseLayout>

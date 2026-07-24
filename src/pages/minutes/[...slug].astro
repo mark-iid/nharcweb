@@ -1,0 +1,26 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+
+export async function getStaticPaths() {
+  const items = await getCollection('minutes', ({ data }) => !data.draft);
+  return items.map((m) => ({ params: { slug: m.id }, props: { m } }));
+}
+
+const { m } = Astro.props;
+const { Content } = await render(m);
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+const heading = m.data.title ?? `${m.data.meeting} Meeting Minutes`;
+---
+<BaseLayout title={heading} description={`Minutes — ${fmt(m.data.date)}`}>
+  <PageHeader title={heading} sub={`${fmt(m.data.date)} · ${m.data.meeting} meeting`} />
+  <div class="wrap prose">
+    <Content />
+    {m.data.document && (
+      <p><a class="btn" href={m.data.document}>Download minutes (PDF)</a></p>
+    )}
+    <p style="margin-top: 2rem;"><a href="/minutes">← All minutes</a></p>
+  </div>
+</BaseLayout>

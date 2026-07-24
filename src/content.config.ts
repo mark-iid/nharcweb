@@ -22,4 +22,29 @@ const news = defineCollection({
   }),
 });
 
-export const collections = { pages, news };
+// Meeting minutes — typed in the CMS and/or an attached PDF.
+const minutes = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/minutes' }),
+  schema: z.object({
+    date: z.coerce.date(),
+    meeting: z.enum(['Business', 'Activities']).default('Business'),
+    title: z.string().optional(),
+    document: z.string().optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+// Activities-meeting presentations — an uploaded slide deck plus metadata.
+const presentations = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/presentations' }),
+  schema: z.object({
+    title: z.string(),
+    date: z.coerce.date(),
+    presenter: z.string().optional(),
+    file: z.string().optional(),
+    summary: z.string().optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { pages, news, minutes, presentations };

@@ -13,9 +13,9 @@ backend:
   base_url: https://newweb.nharc.org
   auth_endpoint: auth
 
-# Where images uploaded through the CMS are stored / referenced.
-media_folder: public/images
-public_folder: /images
+# Where files uploaded through the CMS (images, PDFs, slide decks) are stored / referenced.
+media_folder: public/uploads
+public_folder: /uploads
 
 # Show a live preview link in the editor.
 site_url: https://newweb.nharc.org
@@ -150,3 +150,42 @@ collections:
       - { name: summary, label: Summary, widget: text, required: false }
       - { name: draft, label: Draft, widget: boolean, default: false }
       - { name: body, label: Body, widget: markdown }
+
+  # ---------- Meeting minutes ----------
+  - name: minutes
+    label: Meeting Minutes
+    folder: src/content/minutes
+    format: frontmatter
+    extension: md
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{fields.meeting}}"
+    identifier_field: date
+    fields:
+      - { name: date, label: Meeting date, widget: datetime, time_format: false }
+      - name: meeting
+        label: Meeting type
+        widget: select
+        options: ["Business", "Activities"]
+        default: Business
+      - { name: title, label: Title (optional), widget: string, required: false }
+      - { name: document, label: Attach minutes PDF (optional), widget: file, required: false }
+      - { name: draft, label: Hide from site (draft), widget: boolean, default: false }
+      - { name: body, label: Minutes text (optional if a PDF is attached), widget: markdown, required: false }
+
+  # ---------- Activities presentations ----------
+  - name: presentations
+    label: Presentations
+    folder: src/content/presentations
+    format: frontmatter
+    extension: md
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    identifier_field: title
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: date, label: Date, widget: datetime, time_format: false }
+      - { name: presenter, label: Presenter, widget: string, required: false }
+      - { name: file, label: Slide deck (PDF), widget: file, required: false }
+      - { name: summary, label: Short description, widget: text, required: false }
+      - { name: draft, label: Hide from site (draft), widget: boolean, default: false }
+      - { name: body, label: Notes (optional), widget: markdown, required: false }

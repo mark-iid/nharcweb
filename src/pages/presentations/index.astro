@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+
+const items = (await getCollection('presentations', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+---
+<BaseLayout title="Presentations" description="Slide decks from NHARC activities-meeting programs.">
+  <PageHeader title="Presentations" sub="Talks and programs from our activities meetings." />
+  <div class="wrap">
+    {items.length === 0 && <p>No presentations posted yet.</p>}
+    {items.map((p) => (
+      <article class="card" style="margin-bottom: 1.1rem;">
+        <span class="pill">{fmt(p.data.date)}</span>
+        <h3 style="margin: 0.5rem 0 0.3rem;">{p.data.title}</h3>
+        {p.data.presenter && (
+          <p style="margin: 0.2rem 0; color: var(--muted);">Presented by {p.data.presenter}</p>
+        )}
+        {p.data.summary && <p>{p.data.summary}</p>}
+        {p.data.file && (
+          <p style="margin-bottom: 0;"><a class="btn" href={p.data.file}>Download slides (PDF)</a></p>
+        )}
+      </article>
+    ))}
+  </div>
+</BaseLayout>
