@@ -1,8 +1,15 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import site from '../data/site.json';
 import netData from '../data/nets.json';
 const nets = netData.nets;
+
+const latestNews = (await getCollection('news', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
 ---
 <BaseLayout>
   <section class="hero">
@@ -43,6 +50,26 @@ const nets = netData.nets;
       </div>
     </div>
   </div>
+
+  {latestNews.length > 0 && (
+    <div class="wrap" style="margin-bottom: 2.4rem;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+        <h2 style="margin: 0;">Latest News</h2>
+        <a href="/news">All news →</a>
+      </div>
+      <div style="margin-top: 1rem;">
+        {latestNews.map((post) => (
+          <article class="card" style="margin-bottom: 0.9rem;">
+            <span class="pill">{fmtDate(post.data.date)}</span>
+            <h3 style="margin: 0.45rem 0 0.3rem;">
+              <a href={`/news/${post.id}`}>{post.data.title}</a>
+            </h3>
+            {post.data.summary && <p style="margin-bottom: 0;">{post.data.summary}</p>}
+          </article>
+        ))}
+      </div>
+    </div>
+  )}
 
   <div class="section-soft">
     <div class="wrap section-soft-inner">
