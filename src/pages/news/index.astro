@@ -3,9 +3,10 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHeader from '../../components/PageHeader.astro';
 
-const posts = (await getCollection('news', ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.date.getTime() - a.data.date.getTime()
-);
+const posts = (await getCollection('news', ({ data }) => !data.draft)).sort((a, b) => {
+  if (a.data.pinned !== b.data.pinned) return a.data.pinned ? -1 : 1;
+  return b.data.date.getTime() - a.data.date.getTime();
+});
 const fmt = (d: Date) =>
   d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
 ---
@@ -16,6 +17,7 @@ const fmt = (d: Date) =>
     {posts.map((post) => (
       <article class="card" style="margin-bottom: 1.1rem;">
         <span class="pill">{fmt(post.data.date)}</span>
+        {post.data.pinned && <span class="pill" style="margin-left: 0.4rem;">📌 Pinned</span>}
         <h3 style="margin: 0.5rem 0 0.4rem;">
           <a href={`/news/${post.id}`}>{post.data.title}</a>
         </h3>

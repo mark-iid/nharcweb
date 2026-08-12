@@ -148,6 +148,7 @@ collections:
       - { name: title, label: Title, widget: string }
       - { name: date, label: Date, widget: datetime }
       - { name: summary, label: Summary, widget: text, required: false }
+      - { name: pinned, label: Pin to top, widget: boolean, default: false }
       - { name: draft, label: Draft, widget: boolean, default: false }
       - { name: body, label: Body, widget: markdown }
 
