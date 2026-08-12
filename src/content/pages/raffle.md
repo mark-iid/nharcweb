@@ -3,6 +3,8 @@ title: Club Raffle
 description: Win an Icom IC-7300MK2 HF transceiver — only 300 tickets, $10 each.
 ---
 
+![Icom IC-7300MK2 HF transceiver](/images/icom-7300mk2.jpg)
+
 The club is raffling off a brand-new **Icom IC-7300MK2** HF transceiver — 160 m through 6 m
 with 100 watts on all bands, an improved receiver, video output, and a network jack.
 
