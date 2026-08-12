@@ -17,6 +17,22 @@ backend:
 media_folder: public/uploads
 public_folder: /uploads
 
+# Automatically optimize images uploaded through the CMS: resize oversized
+# photos down and re-encode them to WebP so pages stay light on the small server.
+# Editors can upload straight off a phone/camera without resizing first.
+media_libraries:
+  default:
+    config:
+      transformations:
+        raster_image:
+          format: webp
+          quality: 82
+          width: 1600
+          height: 1600
+        svg:
+          optimize: true
+      slugify_filename: true
+
 # Show a live preview link in the editor.
 site_url: https://newweb.nharc.org
 display_url: https://newweb.nharc.org
@@ -133,7 +149,10 @@ collections:
     fields:
       - { name: title, label: Title, widget: string }
       - { name: description, label: SEO description, widget: text, required: false }
-      - { name: body, label: Body, widget: markdown }
+      - name: body
+        label: Body
+        widget: markdown
+        hint: 'Add a picture with the image button in the toolbar — large photos are resized automatically on upload. To reuse an image already uploaded, type `![description](/uploads/filename)`.'
 
   # ---------- News / announcements ----------
   - name: news
@@ -150,7 +169,10 @@ collections:
       - { name: summary, label: Summary, widget: text, required: false }
       - { name: pinned, label: Pin to top, widget: boolean, default: false }
       - { name: draft, label: Draft, widget: boolean, default: false }
-      - { name: body, label: Body, widget: markdown }
+      - name: body
+        label: Body
+        widget: markdown
+        hint: 'Add a picture with the image button in the toolbar — large photos are resized automatically on upload. To reuse an image already uploaded, type `![description](/uploads/filename)`.'
 
   # ---------- Meeting minutes ----------
   - name: minutes
@@ -171,7 +193,11 @@ collections:
       - { name: title, label: Title (optional), widget: string, required: false }
       - { name: document, label: Attach minutes PDF (optional), widget: file, required: false }
       - { name: draft, label: Hide from site (draft), widget: boolean, default: false }
-      - { name: body, label: Minutes text (optional if a PDF is attached), widget: markdown, required: false }
+      - name: body
+        label: Minutes text (optional if a PDF is attached)
+        widget: markdown
+        required: false
+        hint: 'Add a picture with the image button in the toolbar — large photos are resized automatically on upload. To reuse an image already uploaded, type `![description](/uploads/filename)`.'
 
   # ---------- Activities presentations ----------
   - name: presentations
@@ -189,4 +215,8 @@ collections:
       - { name: file, label: Slide deck (PDF), widget: file, required: false }
       - { name: summary, label: Short description, widget: text, required: false }
       - { name: draft, label: Hide from site (draft), widget: boolean, default: false }
-      - { name: body, label: Notes (optional), widget: markdown, required: false }
+      - name: body
+        label: Notes (optional)
+        widget: markdown
+        required: false
+        hint: 'Add a picture with the image button in the toolbar — large photos are resized automatically on upload. To reuse an image already uploaded, type `![description](/uploads/filename)`.'
