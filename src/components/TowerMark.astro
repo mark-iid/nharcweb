@@ -1,0 +1,32 @@
+---
+// NHARC tower mark — an antenna tower transmitting gold radio waves, distilled
+// from the club's circular seal. Tower strokes inherit `currentColor` (white on
+// the green header); the waves are always the brand gold.
+interface Props { size?: number; }
+const { size = 42 } = Astro.props;
+---
+<svg
+  class="logo"
+  width={size}
+  height={size}
+  viewBox="0 0 64 64"
+  role="img"
+  aria-label="NHARC antenna tower"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <g stroke="#ffcf35" stroke-width="2.4" stroke-linecap="round">
+    <path d="M24.2 19.5 A9 9 0 0 1 39.8 19.5" />
+    <path d="M19.0 16.5 A15 15 0 0 1 45.0 16.5" />
+    <path d="M13.8 13.5 A21 21 0 0 1 50.2 13.5" />
+  </g>
+  <circle cx="32" cy="24" r="2.3" fill="#ffcf35" />
+  <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 24 L25 54" />
+    <path d="M32 24 L39 54" />
+    <path d="M32 24 L32 54" />
+    <path d="M29.7 34 H34.3" />
+    <path d="M27.3 44 H36.7" />
+    <path d="M24 54 H40" />
+  </g>
+</svg>

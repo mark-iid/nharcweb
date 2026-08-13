@@ -16,6 +16,11 @@ const fmtDate = (d: Date) =>
 ---
 <BaseLayout>
   <section class="hero">
+    <svg class="hero-waves" viewBox="0 0 200 200" fill="none" stroke="#ffcf35" stroke-width="2.4" aria-hidden="true">
+      <circle cx="100" cy="100" r="18" /><circle cx="100" cy="100" r="42" /><circle cx="100" cy="100" r="66" />
+      <circle cx="100" cy="100" r="92" /><circle cx="100" cy="100" r="120" />
+      <circle cx="100" cy="100" r="5" fill="#ffcf35" stroke="none" />
+    </svg>
     <div class="wrap">
       <p class="eyebrow">{site.callsign} &middot; Greater Pittsburgh</p>
       <h1>North Hills Amateur Radio Club</h1>
@@ -29,6 +34,10 @@ const fmtDate = (d: Date) =>
         <a class="btn secondary" href="/repeaters">Our Repeaters</a>
       </div>
     </div>
+    <svg class="hero-hills" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,64 C220,18 380,110 640,64 C900,18 1120,100 1440,50 L1440,120 L0,120 Z" fill="#009933" opacity=".92" />
+      <path d="M0,88 C260,50 520,112 780,86 C1040,60 1240,112 1440,82 L1440,120 L0,120 Z" fill="var(--bg)" />
+    </svg>
   </section>
 
   <div class="wrap" style="margin-top: 2rem;">
