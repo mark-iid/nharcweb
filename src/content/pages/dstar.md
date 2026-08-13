@@ -7,8 +7,8 @@ D-STAR is an open digital voice and data standard for amateur radio, developed b
 Amateur Radio League (JARL). NHARC brought **Pittsburgh's first D-STAR repeater** on the air
 in **June 2007**, installed at the WQED TV transmitter building in Oakland.
 
-Today the club operates D-STAR on **W3EXW C (146.82 MHz, 2 m)** and **W3PGH B (444.35 MHz,
-70 cm)**. The 146.82 machine hosts the **Western PA D-STAR net every Monday at 9:00 PM**,
+Today the club operates D-STAR on **W3EXW C (146.82 MHz, 2 m)** and W3PGH B (444.35 MHz,
+70 cm). Both repeaters host the **Western PA D-STAR net every Monday at 9:00 PM**,
 linked to reflector **REF063C**.
 
 ## Radio programming — W3PGH 70 cm D-STAR
