@@ -13,3 +13,6 @@ node_modules/
 npm-debug.log*
 # deploy secrets
 deploy/*.key
+
+# Claude Code local config (personal, not needed for build)
+.claude/

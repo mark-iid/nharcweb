@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
 import site from '../data/site.json';
 import netData from '../data/nets.json';
 const nets = netData.nets;
@@ -16,22 +17,24 @@ const fmtDate = (d: Date) =>
 ---
 <BaseLayout>
   <section class="hero">
-    <svg class="hero-waves" viewBox="0 0 200 200" fill="none" stroke="#ffcf35" stroke-width="2.4" aria-hidden="true">
-      <circle cx="100" cy="100" r="18" /><circle cx="100" cy="100" r="42" /><circle cx="100" cy="100" r="66" />
-      <circle cx="100" cy="100" r="92" /><circle cx="100" cy="100" r="120" />
-      <circle cx="100" cy="100" r="5" fill="#ffcf35" stroke="none" />
-    </svg>
-    <div class="wrap">
-      <p class="eyebrow">{site.callsign} &middot; Greater Pittsburgh</p>
-      <h1>North Hills Amateur Radio Club</h1>
-      <p class="lede">
-        Fellowship, opportunities to learn and grow, activities throughout the year, and a
-        series of repeaters across Greater Pittsburgh. New and prospective hams are always welcome.
-      </p>
-      <div class="btn-row">
-        <a class="btn" href="/membership">Join the Club</a>
-        <a class="btn secondary" href="/meetings">Meeting Schedule</a>
-        <a class="btn secondary" href="/repeaters">Our Repeaters</a>
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow">{site.callsign} &middot; Greater Pittsburgh</p>
+        <h1>North Hills Amateur Radio Club</h1>
+        <p class="lede">
+          Fellowship, opportunities to learn and grow, activities throughout the year, and a
+          series of repeaters across Greater Pittsburgh. New and prospective hams are always welcome.
+        </p>
+        <div class="btn-row">
+          <a class="btn" href="/membership">Join the Club</a>
+          <a class="btn secondary" href="/meetings">Meeting Schedule</a>
+          <a class="btn secondary" href="/repeaters">Our Repeaters</a>
+        </div>
+      </div>
+      <div class="hero-art">
+        <div class="hero-seal">
+          <img src="/images/nharc-seal.png" width="300" height="296" alt="North Hills Amateur Radio Club seal — W3EXW" />
+        </div>
       </div>
     </div>
     <svg class="hero-hills" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
@@ -54,19 +57,19 @@ const fmtDate = (d: Date) =>
   <div class="wrap">
     <div class="grid cols-3" style="margin: 2.2rem 0;">
       <div class="card">
-        <span class="icon">📻</span>
+        <Icon name="repeaters" />
         <h3>Repeaters</h3>
         <p>A robust network of 2 m, 1.25 m, and 70 cm machines — analog and D-STAR — covering the region 24/7.</p>
         <p><a href="/repeaters">See frequencies &amp; tones →</a></p>
       </div>
       <div class="card">
-        <span class="icon">🗣️</span>
+        <Icon name="nets" />
         <h3>Weekly Nets</h3>
         <p>Check in with the club on the air. Our voice net runs every Tuesday and the D-STAR net every Monday.</p>
         <p><a href="/nets">Net schedule →</a></p>
       </div>
       <div class="card">
-        <span class="icon">📝</span>
+        <Icon name="testing" />
         <h3>License Testing</h3>
         <p>VE exam sessions on the second Saturday of each month for new and upgrading hams.</p>
         <p><a href="/ve-testing">Testing details →</a></p>

@@ -27,7 +27,9 @@ Content lives in plain files you can edit directly:
 | PA D-STAR reference table | `src/data/padstar.json` |
 | Page prose (About, Membership, VE Testing, D-STAR, Raffle) | `src/content/pages/*.md` |
 | News / announcements | `src/content/news/*.md` |
-| PDFs, images | `public/files/`, `public/images/` |
+| Meeting minutes | `src/content/minutes/*.md` |
+| Activities presentations | `src/content/presentations/*.md` |
+| PDFs, images | `public/files/`, `public/images/`, `public/uploads/` |
 
 ## Local development
 
@@ -54,16 +56,18 @@ WordPress attempt are disabled.
 
 ```
 src/
-  components/   Header, Footer, Logo, PageHeader
-  content/      Markdown: pages/ and news/  (+ content.config.ts schemas)
+  components/   Header, Footer, TowerMark, Icon, PageHeader
+  content/      Markdown: pages/, news/, minutes/, presentations/  (+ content.config.ts schemas)
   data/         JSON data files (repeaters, nets, officers, site, padstar)
   layouts/      BaseLayout.astro
   pages/        One .astro file per route
-  styles/       global.css
+  styles/       global.css  (green & gold theme, self-hosted webfonts)
 public/
   admin/        Sveltia CMS (index.html + config.yml)
   files/        PDFs (membership form, etc.)
-  images/       Images
+  fonts/        Self-hosted webfonts (Barlow Semi Condensed, Public Sans)
+  images/       Images (incl. the club seal + ARRL Affiliated Club badge)
+  uploads/      CMS-uploaded media
 deploy/         Caddyfile + deploy.sh
 ```
 
