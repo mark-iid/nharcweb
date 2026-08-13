@@ -24,11 +24,11 @@
       "frequency": "146.820",
       "callsign": "W3EXW C",
       "band": "2 m",
-      "mode": "Analog / D-STAR",
+      "mode": "D-STAR",
       "tone": "88.5 Hz",
-      "power": "",
+      "power": "20 watts",
       "location": "WQED-TV, Oakland",
-      "notes": "Hosts the Western PA D-STAR net; links to REF063C. Shares infrastructure with the 444.35 D-STAR machine."
+      "notes": "Hosts the Western PA D-STAR net; links to REF063C."
     },
     {
       "frequency": "444.400",
@@ -37,8 +37,8 @@
       "mode": "Analog FM",
       "tone": "88.5 Hz",
       "power": "75 W",
-      "location": "WPXI TV-11",
-      "notes": "Oldest 440 repeater in Pittsburgh. Roof mounted, ~1200 ft elevation."
+      "location": "WQED TV",
+      "notes": "Oldest 440 repeater in Pittsburgh."
     },
     {
       "frequency": "444.350",
@@ -46,8 +46,8 @@
       "band": "70 cm",
       "mode": "D-STAR",
       "tone": "",
-      "power": "",
-      "location": "Richland Township",
+      "power": "20 watts",
+      "location": "HamptonTownship",
       "notes": "D-STAR digital voice. RX 444.350 / TX 449.350 (+5 MHz)."
     },
     {
@@ -56,9 +56,9 @@
       "band": "1.25 m",
       "mode": "Analog FM",
       "tone": "88.5 Hz",
-      "power": "40 W",
-      "location": "Richland Township",
-      "notes": "The club's smallest repeater. Bridgecom equipment. On AllStarLink, linked with the W3PGH 223.98 machine."
+      "power": "30 W",
+      "location": "Hampton Township",
+      "notes": "The club's smallest repeater. Bridgecom equipment. On  StarLink, linked with the PA220 hub 29370."
     },
     {
       "frequency": "146.610",
@@ -66,8 +66,8 @@
       "band": "2 m",
       "mode": "Analog FM",
       "tone": "131.8 Hz",
-      "power": "",
-      "location": "",
+      "power": "75 watts",
+      "location": "Carrick",
       "notes": ""
     },
     {
@@ -76,9 +76,9 @@
       "band": "1.25 m",
       "mode": "Analog FM",
       "tone": "131.8 Hz",
-      "power": "",
-      "location": "Bloomfield",
-      "notes": "On AllStarLink, linked with the W3EXW 224.10 machine."
+      "power": "20 watts",
+      "location": "WQED TV",
+      "notes": "On AllStarLink, linked the PA220 hub 29370."
     },
     {
       "frequency": "444.950",
@@ -86,9 +86,9 @@
       "band": "70 cm",
       "mode": "Analog FM",
       "tone": "131.8 Hz",
-      "power": "",
-      "location": "",
-      "notes": ""
+      "power": "75 watts",
+      "location": "Carrick",
+      "notes": "Currently this repeater needs to be replaced. The replace ment repeater is waiting to be installed."
     }
   ]
 }
