@@ -8,8 +8,9 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
+  noindex?: boolean;
 }
-const { title, description, image } = Astro.props;
+const { title, description, image, noindex } = Astro.props;
 const fullTitle = title ? `${title} — ${site.shortName} (${site.callsign})` : `${site.clubName} — ${site.callsign}`;
 const desc = description ?? site.tagline;
 // Absolute URLs for social cards / canonical — resolved against `site` in astro.config,
@@ -24,6 +25,7 @@ const ogImage = new URL(image ?? '/og-image.jpg', Astro.site).href;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={desc} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

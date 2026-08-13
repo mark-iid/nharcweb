@@ -8,6 +8,15 @@ newweb.nharc.org {
 	root * /var/www/nharc
 	encode zstd gzip
 
+	# Baseline security response headers.
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		X-Frame-Options "SAMEORIGIN"
+		-Server
+	}
+
 	# CMS "Sign In with GitHub" OAuth relay (nharc-oauth.service on :8402).
 	handle /auth* {
 		reverse_proxy 127.0.0.1:8402
