@@ -12,8 +12,8 @@
       "name": "Western PA D-STAR Net",
       "day": "Monday",
       "time": "9:00 PM",
-      "repeater": "W3EXW 146.82 (D-STAR)",
-      "extra": "Linked to reflector REF063C.",
+      "repeater": "W3EXW 146.82 and W3PGH 444.35",
+      "extra": "Linked to reflector REF063C",
       "notes": "Running since July 2012 for D-STAR operators"
     },
     {
