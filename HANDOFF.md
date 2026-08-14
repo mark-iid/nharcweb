@@ -1,8 +1,8 @@
 # NHARC Website — Handoff & Operations
 
-This covers everything that isn't in the code: how the live site is set up, the
-one-time steps to finish (GitHub CI + browser CMS login), how to switch the real
-`nharc.org` domain over, and the content that still needs a human to verify.
+This covers everything that isn't in the code: how the live site is set up (GitHub CI
+and the browser CMS login are both done), how to switch the real `nharc.org` domain
+over when you're ready, and the content that still needs a human to verify.
 
 ---
 
@@ -12,76 +12,76 @@ one-time steps to finish (GitHub CI + browser CMS login), how to switch the real
   Let's Encrypt HTTPS).
 - Served by **Caddy** (`/etc/caddy/Caddyfile`, source in `deploy/Caddyfile`) from
   `/var/www/nharc`. Automatic HTTPS + renewal. Caddy uses ~30 MB RAM.
-- **Apache is stopped and disabled** (the old WordPress + Elementor attempt was
-  OOM-killing the 476 MB box — that's why we went static).
 - All content from the old nharc.org has been migrated (repeaters, nets, meetings,
-  VE testing, membership, D-STAR, raffle, officers, contact).
-- Browser CMS files are in place at `/admin/` but need the GitHub backend wired up
-  (section 3) before login works.
+  VE testing, membership, D-STAR, raffle, officers, contact), plus news, meeting
+  minutes, and activities presentations.
+- **Browser CMS is live** at `/admin/` — GitHub sign-in works (self-hosted OAuth
+  relay, section 3). Edits commit to `main` and auto-deploy.
+- The site wears the club's **green & gold identity** (seal, tower-mark logo,
+  self-hosted fonts). Baseline security headers (HSTS, nosniff, etc.) are set in Caddy.
 
 **Redeploy anytime** from your Mac: `./deploy/deploy.sh` (builds + rsyncs).
 
 ---
 
-## 2. Put it on GitHub + automatic deploys
+## 2. GitHub + automatic deploys — DONE
 
-The browser CMS and CI both need the repo on GitHub.
+The repo is at **`mark-iid/nharcweb`** (public). Every push to `main` triggers GitHub
+Actions to build the site and rsync it to the server over SSH
+(`.github/workflows/deploy.yml`, ~25 s). CMS edits commit to `main`, so they deploy the
+same way.
 
-1. **Create the repo** on GitHub (a club org like `nharc`, or your account). The
-   local repo is **already initialized**: `main` (the live classic theme) and
-   `signal-theme` (the archived dark theme). Push both:
-   ```bash
-   cd ~/src/nharcweb
-   git remote add origin git@github.com:OWNER/nharcweb.git
-   git push -u origin main
-   git push origin signal-theme
-   ```
-2. **Make a deploy SSH key** (lets GitHub Actions rsync to the server):
-   ```bash
-   ssh-keygen -t ed25519 -f ~/nharc_deploy -N "" -C "gh-actions-deploy"
-   ssh mark@newweb.nharc.org "cat >> ~/.ssh/authorized_keys" < ~/nharc_deploy.pub
-   ```
-3. **Add repo secrets** (GitHub → Settings → Secrets and variables → Actions):
-   | Secret | Value |
-   | --- | --- |
-   | `DEPLOY_SSH_KEY` | contents of `~/nharc_deploy` (the **private** key) |
-   | `DEPLOY_HOST` | `newweb.nharc.org` |
-   | `DEPLOY_USER` | `mark` |
-   | `DEPLOY_PATH` | `/var/www/nharc` |
-4. Delete the local private key copy (`rm ~/nharc_deploy`). The workflow
-   (`.github/workflows/deploy.yml`) now builds and deploys on every push to `main`.
+The Actions secrets are already configured (Settings → Secrets and variables → Actions)
+— listed here only in case the deploy key ever needs rotating:
+
+| Secret | Value |
+| --- | --- |
+| `DEPLOY_SSH_KEY` | private half of the deploy key (public half is in the server's `~/.ssh/authorized_keys`) |
+| `DEPLOY_HOST` | `newweb.nharc.org` |
+| `DEPLOY_USER` | `mark` |
+| `DEPLOY_PATH` | `/var/www/nharc` |
 
 ---
 
-## 3. Browser CMS (Sveltia) login — DONE
+## 3. Browser CMS (Sveltia) login — LIVE
 
 The editor lives at **/admin/**. It commits edits to `main`; Actions rebuilds and
-deploys (~30 s). Editors need a GitHub account with write access to `mark-iid/nharcweb`.
-`config.yml` already points at the repo. Two ways to sign in:
+deploys. `config.yml` points at `mark-iid/nharcweb`. Two ways to sign in, both working:
 
-- **Access Token** (works today): on the login screen choose *"Sign In Using Access
+- **Sign In with GitHub** (one-click) — backed by the self-hosted OAuth relay below.
+  This is the normal path for editors.
+- **Access Token** (fallback) — on the login screen choose *"Sign In Using Access
   Token"* and paste a fine-grained PAT (repo = `mark-iid/nharcweb`, Contents:
-  read/write). No infra needed — good for one or two maintainers.
-- **"Sign In with GitHub"** (one-click, nicer for multiple editors): backed by a
-  **self-hosted OAuth relay** on this box — see below.
+  read/write). Handy if the relay is ever down.
 
-### The self-hosted OAuth relay
-A tiny stdlib-Python relay (`deploy/oauth-relay.py`) runs as **`nharc-oauth.service`**
-on `127.0.0.1:8402`, reverse-proxied by Caddy at `/auth` and `/callback`. It's fully
-set up **except** the GitHub OAuth App credentials, which you create once:
+### Adding an editor
+Editors sign in with their own GitHub account, so "adding a user" means giving that
+account write access to the repo:
 
-1. **Create the OAuth App:** GitHub → Settings → Developer settings → **OAuth Apps** →
-   New OAuth App.
-   - Homepage URL: `https://newweb.nharc.org`
-   - Authorization callback URL: `https://newweb.nharc.org/callback`
-   - Register, copy the **Client ID**, then **Generate a client secret** and copy it.
-2. **Put the credentials on the server** (secret stays off any chat/log):
+1. Get their GitHub username (they need a free GitHub account).
+2. Add them as a collaborator:
    ```bash
-   ssh mark@newweb.nharc.org 'sudo nano /etc/nharc-oauth.env'   # replace the two REPLACE_ME lines
-   ssh mark@newweb.nharc.org 'sudo systemctl restart nharc-oauth'
+   gh api --method PUT repos/mark-iid/nharcweb/collaborators/USERNAME
    ```
-   Then "Sign In with GitHub" at `/admin/` works. Manage the service with
-   `systemctl status|restart nharc-oauth` and `journalctl -u nharc-oauth`.
+   (or GitHub → repo → Settings → Collaborators → Add people).
+3. They accept the invite, then sign in at `/admin/`.
+
+Edits are committed under each editor's own GitHub identity. Remove someone by removing
+them as a collaborator (`gh api --method DELETE …`). Note: a collaborator has write
+access to the **whole repo** (code + content), not just the CMS — add only people you
+trust accordingly.
+
+### The self-hosted OAuth relay — configured
+A tiny stdlib-Python relay (`deploy/oauth-relay.py`) runs as **`nharc-oauth.service`**
+on `127.0.0.1:8402`, reverse-proxied by Caddy at `/auth` and `/callback`. The GitHub
+OAuth App is created and its Client ID/secret live in `/etc/nharc-oauth.env`, so "Sign
+In with GitHub" works today. Manage with `systemctl status|restart nharc-oauth` and
+`journalctl -u nharc-oauth`.
+
+To rotate or recreate the OAuth App (only if needed): make a new OAuth App (GitHub →
+Settings → Developer settings → **OAuth Apps**) with Homepage `https://newweb.nharc.org`
+and callback `https://newweb.nharc.org/callback`, then update the two values in
+`/etc/nharc-oauth.env` and `sudo systemctl restart nharc-oauth`.
 
 ---
 
@@ -111,11 +111,10 @@ The site is on staging today. To make it the real site:
    DNS TTL a day ahead for a quick, reversible switch.
 3. **Update the canonical URL.** In `astro.config.mjs` set `site: 'https://nharc.org'`
    and in `public/robots.txt` update the sitemap URL. Rebuild/redeploy.
-4. **Update the CMS OAuth for the new domain** (if you set it up, §3): change
-   `base_url` in `public/admin/config.yml` to `https://nharc.org`, update the OAuth
-   App's callback URL to `https://nharc.org/callback`, and set `REDIRECT_URI` /
-   `ALLOWED_ORIGIN` in `/etc/nharc-oauth.env` to the new domain, then
-   `sudo systemctl restart nharc-oauth`.
+4. **Update the CMS OAuth for the new domain** (§3): change `base_url` in
+   `public/admin/config.yml` to `https://nharc.org`, update the OAuth App's callback
+   URL to `https://nharc.org/callback`, and set `REDIRECT_URI` / `ALLOWED_ORIGIN` in
+   `/etc/nharc-oauth.env` to the new domain, then `sudo systemctl restart nharc-oauth`.
 5. Keep `newweb.nharc.org` working as-is (it's in the Caddy block), so you can still
    preview.
 
@@ -156,16 +155,19 @@ and `public/files/W3EXW-Prologue.pdf` — not linked anywhere yet.
 
 ---
 
-## 6a. Themes
+## 6a. Look & branding
 
-The live site uses the **classic** light theme. A second, bolder **dark "signal"**
-theme (animated waveform hero, modernized gradient NHARC wordmark) is preserved on the
-**`signal-theme`** git branch to revisit later — likely without the animation.
+The live site uses the club's **green & gold identity**, built from the official seal
+artwork: pine green `#006633` + gold `#ffcf35`, the tower-mark logo, the circular seal,
+and self-hosted webfonts (Barlow Semi Condensed for headings, Public Sans for body).
+Colours are CSS variables at the top of `src/styles/global.css`; the seal and ARRL
+badge live in `public/images/`, fonts in `public/fonts/`.
 
-- `main` (the active branch) = classic theme. All content edits go here, so the CMS and
-  every edit land on the live look automatically.
-- `signal-theme` = the dark theme, frozen. To preview or adopt it later, we'll rebase it
-  onto the current content and deploy.
+Two old branches remain in git and can be deleted whenever you like:
+
+- `signal-theme` — an early dark "signal" concept (animated waveform hero), abandoned
+  before the green/gold rebrand.
+- `green-gold-rebrand` — the rebrand branch, already merged into `main`.
 
 ## 6. Members-only area (future)
 

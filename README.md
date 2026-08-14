@@ -11,9 +11,10 @@ files, so it's fast, secure, and light enough to run comfortably on a small box.
 ## Editing content — two ways
 
 ### 1. In the browser (for non-technical editors)
-Once the GitHub backend is set up (see [HANDOFF.md](HANDOFF.md)), club volunteers
-edit the site at **https://newweb.nharc.org/admin/** — a friendly form-based editor
-(Sveltia CMS). Saving publishes automatically. No coding required.
+Club volunteers edit the site in the browser at **https://newweb.nharc.org/admin/** —
+a friendly form-based editor (Sveltia CMS). Sign in with GitHub, make changes, and
+saving publishes automatically. No coding required. Editor access is granted by adding
+the person's GitHub account to the repo (see [HANDOFF.md](HANDOFF.md)).
 
 ### 2. In the code (for developers)
 Content lives in plain files you can edit directly:
@@ -49,14 +50,13 @@ npm run preview  # serve the built site
 ## How it's served
 
 The server runs [Caddy](https://caddyserver.com) (`deploy/Caddyfile`), serving
-`/var/www/nharc` with automatic HTTPS via Let's Encrypt. Apache and the old
-WordPress attempt are disabled.
+`/var/www/nharc` with automatic HTTPS via Let's Encrypt.
 
 ## Project layout
 
 ```
 src/
-  components/   Header, Footer, TowerMark, Icon, PageHeader
+  components/   Header, Footer, TowerMark, Icon, PageHeader, ClubSlideshow
   content/      Markdown: pages/, news/, minutes/, presentations/  (+ content.config.ts schemas)
   data/         JSON data files (repeaters, nets, officers, site, padstar)
   layouts/      BaseLayout.astro
@@ -66,7 +66,7 @@ public/
   admin/        Sveltia CMS (index.html + config.yml)
   files/        PDFs (membership form, etc.)
   fonts/        Self-hosted webfonts (Barlow Semi Condensed, Public Sans)
-  images/       Images (incl. the club seal + ARRL Affiliated Club badge)
+  images/       Images (club seal, ARRL badge, and the club/ photo set)
   uploads/      CMS-uploaded media
 deploy/         Caddyfile + deploy.sh
 ```
