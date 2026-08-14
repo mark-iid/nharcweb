@@ -12,7 +12,7 @@ const latestNews = (await getCollection('news', ({ data }) => !data.draft))
     if (a.data.pinned !== b.data.pinned) return a.data.pinned ? -1 : 1;
     return b.data.date.getTime() - a.data.date.getTime();
   })
-  .slice(0, 5);
+  .slice(0, 3);
 const fmtDate = (d: Date) =>
   d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
 ---
@@ -44,19 +44,9 @@ const fmtDate = (d: Date) =>
     </svg>
   </section>
 
-  <div class="wrap" style="margin-top: 2rem;">
-    <div class="callout" style="display: flex; gap: 1rem 1.2rem; align-items: center; flex-wrap: wrap;">
-      <span class="icon" style="font-size: 2rem; line-height: 1;">🎟️</span>
-      <div style="flex: 1 1 18rem;">
-        <h3 style="margin: 0 0 0.3rem;">Club Raffle — win an Icom IC-7300MK2</h3>
-        <p style="margin: 0;">Only 300 tickets at $10 each. The drawing is held once all tickets sell, or at the 2026 Holiday Party — you need not be present to win.</p>
-      </div>
-      <a class="btn" href="/raffle">Tickets &amp; details →</a>
-    </div>
-  </div>
-
+  {/* What the club offers */}
   <div class="wrap">
-    <div class="grid cols-3" style="margin: 2.2rem 0;">
+    <div class="grid cols-3" style="margin: 2.4rem 0;">
       <div class="card">
         <Icon name="repeaters" />
         <h3>Repeaters</h3>
@@ -78,7 +68,8 @@ const fmtDate = (d: Date) =>
     </div>
   </div>
 
-  <div class="wrap" style="margin: 0.6rem auto 2.6rem;">
+  {/* Community */}
+  <div class="wrap" style="margin: 0.6rem auto 2.8rem;">
     <div class="grid cols-2" style="align-items: center;">
       <ClubSlideshow />
       <div>
@@ -93,27 +84,7 @@ const fmtDate = (d: Date) =>
     </div>
   </div>
 
-  {latestNews.length > 0 && (
-    <div class="wrap" style="margin-bottom: 2.4rem;">
-      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
-        <h2 style="margin: 0;">Latest News</h2>
-        <a href="/news">All news →</a>
-      </div>
-      <div style="margin-top: 1rem;">
-        {latestNews.map((post) => (
-          <article class="card" style="margin-bottom: 0.9rem;">
-            <span class="pill">{fmtDate(post.data.date)}</span>
-            {post.data.pinned && <span class="pill" style="margin-left: 0.4rem;">📌 Pinned</span>}
-            <h3 style="margin: 0.45rem 0 0.3rem;">
-              <a href={`/news/${post.id}`}>{post.data.title}</a>
-            </h3>
-            {post.data.summary && <p style="margin-bottom: 0;">{post.data.summary}</p>}
-          </article>
-        ))}
-      </div>
-    </div>
-  )}
-
+  {/* Practical: when & where */}
   <div class="section-soft">
     <div class="wrap section-soft-inner">
       <div class="grid cols-2">
@@ -141,7 +112,41 @@ const fmtDate = (d: Date) =>
     </div>
   </div>
 
-  <div class="wrap" style="margin-top: 2.4rem;">
+  {/* What's new */}
+  {latestNews.length > 0 && (
+    <div class="wrap" style="margin: 2.6rem auto;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+        <h2 style="margin: 0;">Latest News</h2>
+        <a href="/news">All news →</a>
+      </div>
+      <div style="margin-top: 1rem;">
+        {latestNews.map((post) => (
+          <article class="card" style="margin-bottom: 0.9rem;">
+            <span class="pill">{fmtDate(post.data.date)}</span>
+            {post.data.pinned && <span class="pill" style="margin-left: 0.4rem;">📌 Pinned</span>}
+            <h3 style="margin: 0.45rem 0 0.3rem;">
+              <a href={`/news/${post.id}`}>{post.data.title}</a>
+            </h3>
+            {post.data.summary && <p style="margin-bottom: 0;">{post.data.summary}</p>}
+          </article>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {/* Lighter callouts */}
+  <div class="wrap" style="margin: 2.4rem auto 0;">
+    <div class="callout" style="display: flex; gap: 1rem 1.2rem; align-items: center; flex-wrap: wrap;">
+      <span class="icon" style="font-size: 2rem; line-height: 1;">🎟️</span>
+      <div style="flex: 1 1 18rem;">
+        <h3 style="margin: 0 0 0.3rem;">Club Raffle — win an Icom IC-7300MK2</h3>
+        <p style="margin: 0;">Only 300 tickets at $10 each. The drawing is held once all tickets sell, or at the 2026 Holiday Party — you need not be present to win.</p>
+      </div>
+      <a class="btn" href="/raffle">Tickets &amp; details →</a>
+    </div>
+  </div>
+
+  <div class="wrap" style="margin: 1.1rem auto 0;">
     <div class="callout">
       <p>
         <strong>☕ Club breakfast.</strong> {site.breakfast} Come hang out — all are welcome, no reservation needed.
