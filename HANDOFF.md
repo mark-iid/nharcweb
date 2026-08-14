@@ -85,9 +85,20 @@ and callback `https://newweb.nharc.org/callback`, then update the two values in
 
 ---
 
-## 4. Switching `nharc.org` over (when ready)
+## 4. Domain cutover — DONE (nharc.org is live)
 
-The site is on staging today. To make it the real site:
+**Cutover complete (Aug 2026):** `nharc.org` is the live, canonical site (valid Let's
+Encrypt cert + HSTS). `www.nharc.org`, `nharc.com`, and `www.nharc.com` 301-redirect to
+it. `newweb.nharc.org` is kept as a preview host and still runs the CMS OAuth relay. The
+Caddyfile, `astro.config.mjs` (`site`), and `public/robots.txt` are all updated.
+
+> **CMS login is still on `newweb.nharc.org/admin`** (that's where the OAuth callback
+> points). To move the editor onto `nharc.org/admin`: update the GitHub OAuth App's
+> callback URL to `https://nharc.org/callback`, then set `base_url` in
+> `public/admin/config.yml` and `REDIRECT_URI`/`ALLOWED_ORIGIN` in `/etc/nharc-oauth.env`
+> to `https://nharc.org`, and `sudo systemctl restart nharc-oauth`.
+
+The steps below are retained for reference and the DNS record values.
 
 1. **Add the real domains to Caddy.** Edit `deploy/Caddyfile` — change the site
    block to cover all three hostnames, e.g.:

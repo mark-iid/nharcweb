@@ -1,10 +1,10 @@
 # NHARC website — Caddy config.
 # Installed on the server at /etc/caddy/Caddyfile.
-# Caddy obtains and renews a Let's Encrypt certificate automatically.
-#
-# At DNS cutover, add nharc.org and www.nharc.org (see HANDOFF.md).
+# Caddy obtains and renews Let's Encrypt certificates automatically.
 
-newweb.nharc.org {
+# Primary site: nharc.org (canonical). newweb.nharc.org is kept as a preview host
+# and is where the CMS OAuth relay currently lives.
+nharc.org, newweb.nharc.org {
 	root * /var/www/nharc
 	encode zstd gzip
 
@@ -39,6 +39,11 @@ newweb.nharc.org {
 		rewrite @notfound /404.html
 		file_server
 	}
+}
+
+# Send the alternate hostnames (www, and the .com domain) to the canonical apex.
+www.nharc.org, nharc.com, www.nharc.com {
+	redir https://nharc.org{uri} permanent
 }
 
 # Access + runtime logs go to journald: `journalctl -u caddy`.

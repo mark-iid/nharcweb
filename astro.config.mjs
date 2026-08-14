@@ -2,9 +2,9 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// Staging: newweb.nharc.org. At DNS cutover, change `site` to https://nharc.org.
+// Primary domain (post-cutover). newweb.nharc.org still serves as a preview host.
 export default defineConfig({
-  site: 'https://newweb.nharc.org',
+  site: 'https://nharc.org',
   trailingSlash: 'ignore',
   build: {
     format: 'directory',
