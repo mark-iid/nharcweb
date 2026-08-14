@@ -64,7 +64,7 @@ account write access to the repo:
    gh api --method PUT repos/mark-iid/nharcweb/collaborators/USERNAME
    ```
    (or GitHub → repo → Settings → Collaborators → Add people).
-3. They accept the invite, then sign in at `/admin/`.
+3. They accept the invite, then sign in at **nharc.org/admin**.
 
 Edits are committed under each editor's own GitHub identity. Remove someone by removing
 them as a collaborator (`gh api --method DELETE …`). Note: a collaborator has write
@@ -74,13 +74,14 @@ trust accordingly.
 ### The self-hosted OAuth relay — configured
 A tiny stdlib-Python relay (`deploy/oauth-relay.py`) runs as **`nharc-oauth.service`**
 on `127.0.0.1:8402`, reverse-proxied by Caddy at `/auth` and `/callback`. The GitHub
-OAuth App is created and its Client ID/secret live in `/etc/nharc-oauth.env`, so "Sign
-In with GitHub" works today. Manage with `systemctl status|restart nharc-oauth` and
+OAuth App is created and its Client ID/secret live in `/etc/nharc-oauth.env`; its
+callback is `https://nharc.org/callback`, so "Sign In with GitHub" works at
+**nharc.org/admin**. Manage with `systemctl status|restart nharc-oauth` and
 `journalctl -u nharc-oauth`.
 
 To rotate or recreate the OAuth App (only if needed): make a new OAuth App (GitHub →
-Settings → Developer settings → **OAuth Apps**) with Homepage `https://newweb.nharc.org`
-and callback `https://newweb.nharc.org/callback`, then update the two values in
+Settings → Developer settings → **OAuth Apps**) with Homepage `https://nharc.org` and
+callback `https://nharc.org/callback`, then update the two values in
 `/etc/nharc-oauth.env` and `sudo systemctl restart nharc-oauth`.
 
 ---
@@ -89,14 +90,13 @@ and callback `https://newweb.nharc.org/callback`, then update the two values in
 
 **Cutover complete (Aug 2026):** `nharc.org` is the live, canonical site (valid Let's
 Encrypt cert + HSTS). `www.nharc.org`, `nharc.com`, and `www.nharc.com` 301-redirect to
-it. `newweb.nharc.org` is kept as a preview host and still runs the CMS OAuth relay. The
-Caddyfile, `astro.config.mjs` (`site`), and `public/robots.txt` are all updated.
+it. `newweb.nharc.org` is kept as a preview host. The Caddyfile, `astro.config.mjs`
+(`site`), `public/robots.txt`, and the deploy host (Actions `DEPLOY_HOST`) are all on
+`nharc.org`.
 
-> **CMS login is still on `newweb.nharc.org/admin`** (that's where the OAuth callback
-> points). To move the editor onto `nharc.org/admin`: update the GitHub OAuth App's
-> callback URL to `https://nharc.org/callback`, then set `base_url` in
-> `public/admin/config.yml` and `REDIRECT_URI`/`ALLOWED_ORIGIN` in `/etc/nharc-oauth.env`
-> to `https://nharc.org`, and `sudo systemctl restart nharc-oauth`.
+> **CMS login now lives at `nharc.org/admin`** (moved Aug 2026): the OAuth App callback,
+> `base_url` in `public/admin/config.yml`, and `REDIRECT_URI`/`ALLOWED_ORIGIN` in
+> `/etc/nharc-oauth.env` are all `https://nharc.org`. Editors use **nharc.org/admin**.
 
 The steps below are retained for reference and the DNS record values.
 
