@@ -16,3 +16,6 @@ deploy/*.key
 
 # Claude Code local config (personal, not needed for build)
 .claude/
+
+# Source photos (originals) — only the optimized versions in public/ ship
+pictures/

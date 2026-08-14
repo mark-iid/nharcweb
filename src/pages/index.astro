@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
+import ClubSlideshow from '../components/ClubSlideshow.astro';
 import site from '../data/site.json';
 import netData from '../data/nets.json';
 const nets = netData.nets;
@@ -73,6 +74,21 @@ const fmtDate = (d: Date) =>
         <h3>License Testing</h3>
         <p>VE exam sessions on the second Saturday of each month for new and upgrading hams.</p>
         <p><a href="/ve-testing">Testing details →</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap" style="margin: 0.6rem auto 2.6rem;">
+    <div class="grid cols-2" style="align-items: center;">
+      <ClubSlideshow />
+      <div>
+        <h2 style="margin-top: 0;">Around the club</h2>
+        <p>
+          From Field Day and satellite passes to license classes and the holiday dinner,
+          there's always something going on — on the air and in person. New and prospective
+          hams are always welcome.
+        </p>
+        <p style="margin-bottom: 0;"><a class="btn ghost" href="/meetings">Get involved</a></p>
       </div>
     </div>
   </div>
