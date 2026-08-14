@@ -84,6 +84,28 @@ const fmtDate = (d: Date) =>
     </div>
   </div>
 
+  {/* What's new — announcements up high */}
+  {latestNews.length > 0 && (
+    <div class="wrap" style="margin: 2.6rem auto;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+        <h2 style="margin: 0;">Latest News</h2>
+        <a href="/news">All news →</a>
+      </div>
+      <div style="margin-top: 1rem;">
+        {latestNews.map((post) => (
+          <article class="card" style="margin-bottom: 0.9rem;">
+            <span class="pill">{fmtDate(post.data.date)}</span>
+            {post.data.pinned && <span class="pill" style="margin-left: 0.4rem;">📌 Pinned</span>}
+            <h3 style="margin: 0.45rem 0 0.3rem;">
+              <a href={`/news/${post.id}`}>{post.data.title}</a>
+            </h3>
+            {post.data.summary && <p style="margin-bottom: 0;">{post.data.summary}</p>}
+          </article>
+        ))}
+      </div>
+    </div>
+  )}
+
   {/* Practical: when & where */}
   <div class="section-soft">
     <div class="wrap section-soft-inner">
@@ -111,28 +133,6 @@ const fmtDate = (d: Date) =>
       </div>
     </div>
   </div>
-
-  {/* What's new */}
-  {latestNews.length > 0 && (
-    <div class="wrap" style="margin: 2.6rem auto;">
-      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
-        <h2 style="margin: 0;">Latest News</h2>
-        <a href="/news">All news →</a>
-      </div>
-      <div style="margin-top: 1rem;">
-        {latestNews.map((post) => (
-          <article class="card" style="margin-bottom: 0.9rem;">
-            <span class="pill">{fmtDate(post.data.date)}</span>
-            {post.data.pinned && <span class="pill" style="margin-left: 0.4rem;">📌 Pinned</span>}
-            <h3 style="margin: 0.45rem 0 0.3rem;">
-              <a href={`/news/${post.id}`}>{post.data.title}</a>
-            </h3>
-            {post.data.summary && <p style="margin-bottom: 0;">{post.data.summary}</p>}
-          </article>
-        ))}
-      </div>
-    </div>
-  )}
 
   {/* Lighter callouts */}
   <div class="wrap" style="margin: 2.4rem auto 0;">
