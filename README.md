@@ -22,6 +22,7 @@ Content lives in plain files you can edit directly:
 | What | Where |
 | --- | --- |
 | Club info, schedule, contact, dues | `src/data/site.json` |
+| Home page (intro, "Around the club" blurb, raffle on/off) | `src/data/home.json` |
 | Repeater list | `src/data/repeaters.json` |
 | Net schedule | `src/data/nets.json` |
 | Officers roster | `src/data/officers.json` |
@@ -30,6 +31,7 @@ Content lives in plain files you can edit directly:
 | News / announcements | `src/content/news/*.md` |
 | Meeting minutes | `src/content/minutes/*.md` |
 | Activities presentations | `src/content/presentations/*.md` |
+| Events / calendar | `src/content/events/*.md` |
 | PDFs, images | `public/files/`, `public/images/`, `public/uploads/` |
 
 ## Local development
@@ -57,7 +59,7 @@ The server runs [Caddy](https://caddyserver.com) (`deploy/Caddyfile`), serving
 ```
 src/
   components/   Header, Footer, TowerMark, Icon, PageHeader, ClubSlideshow
-  content/      Markdown: pages/, news/, minutes/, presentations/  (+ content.config.ts schemas)
+  content/      Markdown: pages/, news/, minutes/, presentations/, events/  (+ content.config.ts schemas)
   data/         JSON data files (repeaters, nets, officers, site, padstar)
   layouts/      BaseLayout.astro
   pages/        One .astro file per route

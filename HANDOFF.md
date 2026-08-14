@@ -86,6 +86,28 @@ callback `https://nharc.org/callback`, then update the two values in
 
 ---
 
+## 3a. Editing the home page, events & calendar
+
+All editable in the CMS at **nharc.org/admin** — no code:
+
+- **Home Page** panel → the front page: the intro paragraph, the "Around the club"
+  blurb, and the **Raffle callout with an on/off switch** (turn it off when the raffle
+  ends — heading/text are editable there too). The breakfast note is under
+  **Settings → Breakfast note**.
+- **Events / Calendar** → add an event (date/time, location, details). Two checkboxes:
+  - **Feature on the homepage** — shows it as a banner under the hero with a date badge.
+  - **Hide (draft)** — keeps it off the site.
+  The **/calendar** page lists upcoming events; past ones move to a "Past events" list.
+- **Past & featured events drop off by date automatically.** "Today" is resolved at
+  build time, and a **daily scheduled rebuild** (`schedule:` cron in
+  `.github/workflows/deploy.yml`, 08:00 UTC) keeps the calendar and the featured banners
+  current without anyone editing.
+
+Files behind these: `src/data/home.json` (Home Page), `src/content/events/*.md` (events),
+`src/pages/calendar.astro`, and the featured-events block in `src/pages/index.astro`.
+
+---
+
 ## 4. Domain cutover — DONE (nharc.org is live)
 
 **Cutover complete (Aug 2026):** `nharc.org` is the live, canonical site (valid Let's
