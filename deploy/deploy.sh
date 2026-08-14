@@ -6,7 +6,7 @@
 # Requires: node/npm locally, ssh access to the server as $DEPLOY_USER.
 set -euo pipefail
 
-DEPLOY_HOST="${DEPLOY_HOST:-newweb.nharc.org}"
+DEPLOY_HOST="${DEPLOY_HOST:-nharc.org}"
 DEPLOY_USER="${DEPLOY_USER:-mark}"
 DEPLOY_PATH="${DEPLOY_PATH:-/var/www/nharc}"
 

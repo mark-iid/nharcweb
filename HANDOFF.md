@@ -37,7 +37,7 @@ The Actions secrets are already configured (Settings â†’ Secrets and variables â
 | Secret | Value |
 | --- | --- |
 | `DEPLOY_SSH_KEY` | private half of the deploy key (public half is in the server's `~/.ssh/authorized_keys`) |
-| `DEPLOY_HOST` | `newweb.nharc.org` |
+| `DEPLOY_HOST` | `nharc.org` (was `newweb.nharc.org` pre-cutover) |
 | `DEPLOY_USER` | `mark` |
 | `DEPLOY_PATH` | `/var/www/nharc` |
 
