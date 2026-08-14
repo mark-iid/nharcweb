@@ -10,7 +10,7 @@ backend:
   repo: mark-iid/nharcweb
   branch: main
   # Self-hosted OAuth relay (nharc-oauth.service, proxied by Caddy at /auth + /callback).
-  base_url: https://newweb.nharc.org
+  base_url: https://nharc.org
   auth_endpoint: auth
 
 # Where files uploaded through the CMS (images, PDFs, slide decks) are stored / referenced.
@@ -34,8 +34,8 @@ media_libraries:
       slugify_filename: true
 
 # Show a live preview link in the editor.
-site_url: https://newweb.nharc.org
-display_url: https://newweb.nharc.org
+site_url: https://nharc.org
+display_url: https://nharc.org
 
 collections:
   # ---------- Site-wide settings ----------
