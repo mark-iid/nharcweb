@@ -35,6 +35,19 @@ const minutes = defineCollection({
   }),
 });
 
+// Events / calendar — upcoming club activities. Past ones drop off automatically.
+const events = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/events' }),
+  schema: z.object({
+    title: z.string(),
+    date: z.coerce.date(),
+    endDate: z.coerce.date().optional(),
+    location: z.string().optional(),
+    featured: z.boolean().default(false),
+    draft: z.boolean().default(false),
+  }),
+});
+
 // Activities-meeting presentations — an uploaded slide deck plus metadata.
 const presentations = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/presentations' }),
@@ -48,4 +61,4 @@ const presentations = defineCollection({
   }),
 });
 
-export const collections = { pages, news, minutes, presentations };
+export const collections = { pages, news, minutes, presentations, events };

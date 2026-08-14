@@ -243,6 +243,42 @@ main { padding: 2.5rem 0 3.5rem; }
 .section-soft { background: var(--bg-soft); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .section-soft-inner { padding: 2.4rem 0; }
 
+/* ---------- Events / calendar ---------- */
+.event-card {
+  display: flex;
+  gap: 1.1rem;
+  align-items: flex-start;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.3rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 1.1rem;
+}
+.event-badge {
+  flex: 0 0 auto;
+  width: 62px;
+  text-align: center;
+  background: var(--green);
+  color: #fff;
+  border-radius: 10px;
+  padding: 0.4rem 0;
+  line-height: 1.05;
+}
+.event-badge .mon {
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+  font-weight: 700;
+}
+.event-badge .day { display: block; font-size: 1.5rem; font-weight: 800; font-family: var(--display); }
+.event-body { min-width: 0; max-width: none; }
+.event-meta { color: var(--muted); font-size: 0.95rem; margin: 0 0 0.6rem; }
+.past-events { list-style: none; padding: 0; margin: 0; max-width: 46rem; }
+.past-events li { padding: 0.4rem 0; border-bottom: 1px solid var(--line); color: var(--muted); }
+
 /* Club seal, floated alongside prose (e.g. About) */
 .about-seal { float: right; width: min(220px, 42%); margin: 0.2rem 0 1rem 1.6rem; }
 @media (max-width: 560px) {

@@ -1,0 +1,58 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+
+const all = await getCollection('events', ({ data }) => !data.draft);
+
+// "Today" is resolved at build time; a daily scheduled rebuild keeps it current.
+const now = new Date();
+const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+const dayOf = (d: Date) => new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+const isUpcoming = (e: (typeof all)[number]) => dayOf(e.data.endDate ?? e.data.date) >= today;
+
+const upcoming = all.filter(isUpcoming).sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
+const past = all.filter((e) => !isUpcoming(e)).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const rendered = await Promise.all(upcoming.map(async (e) => ({ e, Content: (await render(e)).Content })));
+
+const hasTime = (d: Date) => d.getUTCHours() !== 0 || d.getUTCMinutes() !== 0;
+const fmtFull = (d: Date) =>
+  d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+const fmtShort = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+const fmtTime = (d: Date) => d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' });
+const mon = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
+const day = (d: Date) => d.toLocaleDateString('en-US', { day: 'numeric', timeZone: 'UTC' });
+---
+<BaseLayout title="Calendar" description="Upcoming events and activities at the North Hills Amateur Radio Club.">
+  <PageHeader title="Calendar" sub="Upcoming club events and activities." />
+  <div class="wrap">
+    {upcoming.length === 0 && <p>No upcoming events posted right now — check back soon.</p>}
+
+    {rendered.map(({ e, Content }) => (
+      <article class="event-card">
+        <div class="event-badge"><span class="mon">{mon(e.data.date)}</span><span class="day">{day(e.data.date)}</span></div>
+        <div class="event-body prose">
+          <h2 style="margin: 0 0 0.25rem;">{e.data.title}</h2>
+          <p class="event-meta">
+            {fmtFull(e.data.date)}{hasTime(e.data.date) && <> &middot; {fmtTime(e.data.date)}</>}
+            {e.data.endDate && <> &ndash; {fmtShort(e.data.endDate)}</>}
+            {e.data.location && <><br />{e.data.location}</>}
+          </p>
+          <Content />
+        </div>
+      </article>
+    ))}
+
+    {past.length > 0 && (
+      <div style="margin-top: 2.6rem;">
+        <h2>Past events</h2>
+        <ul class="past-events">
+          {past.map((e) => (
+            <li><span class="callsign">{fmtShort(e.data.date)}</span> — {e.data.title}{e.data.location && <> &middot; {e.data.location}</>}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+</BaseLayout>

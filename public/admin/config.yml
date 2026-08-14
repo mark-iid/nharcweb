@@ -79,6 +79,27 @@ collections:
           - { name: membershipDues, label: Membership dues, widget: string }
           - { name: breakfast, label: Breakfast note, widget: text }
 
+  # ---------- Home page ----------
+  - name: homepage
+    label: Home Page
+    files:
+      - name: home
+        label: Front page content
+        file: src/data/home.json
+        format: json
+        fields:
+          - { name: heroLede, label: Intro paragraph (top of the page), widget: text }
+          - { name: aroundBlurb, label: "\"Around the club\" blurb", widget: text }
+          - name: raffle
+            label: Raffle callout
+            widget: object
+            fields:
+              - { name: enabled, label: Show the raffle callout on the home page, widget: boolean, default: true }
+              - { name: heading, label: Heading, widget: string }
+              - { name: text, label: Text, widget: text }
+              - { name: buttonLabel, label: Button label, widget: string }
+              - { name: buttonHref, label: Button link, widget: string }
+
   # ---------- Repeaters ----------
   - name: repeaters
     label: Repeaters
@@ -173,6 +194,24 @@ collections:
         label: Body
         widget: markdown
         hint: 'Add a picture with the image button in the toolbar — large photos are resized automatically on upload. To reuse an image already uploaded, type `![description](/uploads/filename)`.'
+
+  # ---------- Events / calendar ----------
+  - name: events
+    label: Events / Calendar
+    folder: src/content/events
+    format: frontmatter
+    extension: md
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    identifier_field: title
+    fields:
+      - { name: title, label: Event title, widget: string }
+      - { name: date, label: Date & time, widget: datetime }
+      - { name: endDate, label: End (optional — for multi-day events), widget: datetime, required: false }
+      - { name: location, label: Location, widget: string, required: false }
+      - { name: featured, label: Feature on the home page, widget: boolean, default: false }
+      - { name: draft, label: Hide (draft), widget: boolean, default: false }
+      - { name: body, label: Details, widget: markdown, required: false }
 
   # ---------- Meeting minutes ----------
   - name: minutes

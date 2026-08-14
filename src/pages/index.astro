@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import ClubSlideshow from '../components/ClubSlideshow.astro';
 import site from '../data/site.json';
+import home from '../data/home.json';
 import netData from '../data/nets.json';
 const nets = netData.nets;
 
@@ -13,8 +14,26 @@ const latestNews = (await getCollection('news', ({ data }) => !data.draft))
     return b.data.date.getTime() - a.data.date.getTime();
   })
   .slice(0, 3);
+
+// Featured, still-upcoming events for the homepage banner ("today" is build time;
+// a daily scheduled rebuild keeps it current so past events drop off on their own).
+const now = new Date();
+const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+const dayOf = (d: Date) => new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+const featuredEvents = (await getCollection('events', ({ data }) => data.featured && !data.draft))
+  .filter((e) => dayOf(e.data.endDate ?? e.data.date) >= today)
+  .sort((a, b) => a.data.date.getTime() - b.data.date.getTime())
+  .slice(0, 2);
+
 const fmtDate = (d: Date) =>
   d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+const evWhen = (d: Date) => {
+  const base = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' });
+  const timed = d.getUTCHours() !== 0 || d.getUTCMinutes() !== 0;
+  return timed ? `${base} · ${d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' })}` : base;
+};
+const evMon = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
+const evDay = (d: Date) => d.toLocaleDateString('en-US', { day: 'numeric', timeZone: 'UTC' });
 ---
 <BaseLayout>
   <section class="hero">
@@ -22,10 +41,7 @@ const fmtDate = (d: Date) =>
       <div class="hero-copy">
         <p class="eyebrow">{site.callsign} &middot; Greater Pittsburgh</p>
         <h1>North Hills Amateur Radio Club</h1>
-        <p class="lede">
-          Fellowship, opportunities to learn and grow, activities throughout the year, and a
-          series of repeaters across Greater Pittsburgh. New and prospective hams are always welcome.
-        </p>
+        <p class="lede">{home.heroLede}</p>
         <div class="btn-row">
           <a class="btn" href="/membership">Join the Club</a>
           <a class="btn secondary" href="/meetings">Meeting Schedule</a>
@@ -43,6 +59,22 @@ const fmtDate = (d: Date) =>
       <path d="M0,88 C260,50 520,112 780,86 C1040,60 1240,112 1440,82 L1440,120 L0,120 Z" fill="var(--bg)" />
     </svg>
   </section>
+
+  {/* Featured upcoming events — set "Feature on the homepage" on an event in the CMS */}
+  {featuredEvents.length > 0 && (
+    <div class="wrap" style="margin-top: 2rem;">
+      {featuredEvents.map((ev) => (
+        <div class="callout info" style="display: flex; gap: 0.9rem 1.2rem; align-items: center; flex-wrap: wrap;">
+          <div class="event-badge"><span class="mon">{evMon(ev.data.date)}</span><span class="day">{evDay(ev.data.date)}</span></div>
+          <div style="flex: 1 1 16rem;">
+            <h3 style="margin: 0 0 0.2rem;">{ev.data.title}</h3>
+            <p style="margin: 0; color: var(--muted);">{evWhen(ev.data.date)}{ev.data.location && <> &middot; {ev.data.location}</>}</p>
+          </div>
+          <a class="btn ghost" href="/calendar">Details →</a>
+        </div>
+      ))}
+    </div>
+  )}
 
   {/* What the club offers */}
   <div class="wrap">
@@ -74,11 +106,7 @@ const fmtDate = (d: Date) =>
       <ClubSlideshow />
       <div>
         <h2 style="margin-top: 0;">Around the club</h2>
-        <p>
-          From Field Day and satellite passes to license classes and the holiday dinner,
-          there's always something going on — on the air and in person. New and prospective
-          hams are always welcome.
-        </p>
+        <p>{home.aroundBlurb}</p>
         <p style="margin-bottom: 0;"><a class="btn ghost" href="/meetings">Get involved</a></p>
       </div>
     </div>
@@ -134,19 +162,21 @@ const fmtDate = (d: Date) =>
     </div>
   </div>
 
-  {/* Lighter callouts */}
-  <div class="wrap" style="margin: 2.4rem auto 0;">
-    <div class="callout" style="display: flex; gap: 1rem 1.2rem; align-items: center; flex-wrap: wrap;">
-      <span class="icon" style="font-size: 2rem; line-height: 1;">🎟️</span>
-      <div style="flex: 1 1 18rem;">
-        <h3 style="margin: 0 0 0.3rem;">Club Raffle — win an Icom IC-7300MK2</h3>
-        <p style="margin: 0;">Only 300 tickets at $10 each. The drawing is held once all tickets sell, or at the 2026 Holiday Party — you need not be present to win.</p>
+  {/* Lighter callouts — raffle can be switched off in the CMS when it's over */}
+  {home.raffle.enabled && (
+    <div class="wrap" style="margin: 2.4rem auto 0;">
+      <div class="callout" style="display: flex; gap: 1rem 1.2rem; align-items: center; flex-wrap: wrap;">
+        <span class="icon" style="font-size: 2rem; line-height: 1;">🎟️</span>
+        <div style="flex: 1 1 18rem;">
+          <h3 style="margin: 0 0 0.3rem;">{home.raffle.heading}</h3>
+          <p style="margin: 0;">{home.raffle.text}</p>
+        </div>
+        <a class="btn" href={home.raffle.buttonHref}>{home.raffle.buttonLabel}</a>
       </div>
-      <a class="btn" href="/raffle">Tickets &amp; details →</a>
     </div>
-  </div>
+  )}
 
-  <div class="wrap" style="margin: 1.1rem auto 0;">
+  <div class="wrap" style={`margin: ${home.raffle.enabled ? '1.1rem' : '2.4rem'} auto 0;`}>
     <div class="callout">
       <p>
         <strong>☕ Club breakfast.</strong> {site.breakfast} Come hang out — all are welcome, no reservation needed.

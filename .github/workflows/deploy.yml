@@ -8,6 +8,10 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Daily rebuild so date-based content (the calendar + featured events) stays
+  # current — past events drop off without needing an edit.
+  schedule:
+    - cron: '0 8 * * *'
 
 concurrency:
   group: deploy

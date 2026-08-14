@@ -1,0 +1,11 @@
+{
+  "heroLede": "Fellowship, opportunities to learn and grow, activities throughout the year, and a series of repeaters across Greater Pittsburgh. New and prospective hams are always welcome.",
+  "aroundBlurb": "From Field Day and satellite passes to license classes and the holiday dinner, there's always something going on — on the air and in person. New and prospective hams are always welcome.",
+  "raffle": {
+    "enabled": true,
+    "heading": "Club Raffle — win an Icom IC-7300MK2",
+    "text": "Only 300 tickets at $10 each. The drawing is held once all tickets sell, or at the 2026 Holiday Party — you need not be present to win.",
+    "buttonLabel": "Tickets & details →",
+    "buttonHref": "/raffle"
+  }
+}
