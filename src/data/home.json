@@ -4,7 +4,7 @@
   "raffle": {
     "enabled": true,
     "heading": "Club Raffle — win an Icom IC-7300MK2",
-    "text": "Only 300 tickets at $10 each. The drawing is held once all tickets sell, or at the 2026 Holiday Party — you need not be present to win.",
+    "text": "Only 100 tickets left to sell at $10 each so do not wait. The drawing is held once all tickets sell, or at the 2026 Holiday Party — you need not be present to win.",
     "buttonLabel": "Tickets & details →",
     "buttonHref": "/raffle"
   }
