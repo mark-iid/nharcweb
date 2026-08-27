@@ -4,14 +4,14 @@ Modern website for the **North Hills Amateur Radio Club**, built with
 [Astro](https://astro.build). It's a static site — the server just serves plain
 files, so it's fast, secure, and light enough to run comfortably on a small box.
 
-**Live (staging):** https://newweb.nharc.org
+**Live (staging):** https://nharc.org
 
 ---
 
 ## Editing content — two ways
 
 ### 1. In the browser (for non-technical editors)
-Club volunteers edit the site in the browser at **https://newweb.nharc.org/admin/** —
+Club volunteers edit the site in the browser at **https://nharc.org/admin/** —
 a friendly form-based editor (Sveltia CMS). Sign in with GitHub, make changes, and
 saving publishes automatically. No coding required. Editor access is granted by adding
 the person's GitHub account to the repo (see [HANDOFF.md](HANDOFF.md)).
