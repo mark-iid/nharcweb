@@ -39,7 +39,7 @@ The Actions secrets are already configured (Settings → Secrets and variables �
 | `DEPLOY_SSH_KEY` | private half of the deploy key (public half is in the server's `~/.ssh/authorized_keys`) |
 | `DEPLOY_HOST` | `nharc.org` (was `newweb.nharc.org` pre-cutover) |
 | `DEPLOY_USER` | `mark` |
-| `DEPLOY_PATH` | `/var/www/nharc` (becomes `.` if you apply §2a) |
+| `DEPLOY_PATH` | `.` — relative on purpose, see §2a (was `/var/www/nharc`) |
 
 `.github/dependabot.yml` keeps the pinned action versions current — one grouped PR
 a month, github-actions only. npm bumps aren't tracked (two direct dependencies);
@@ -47,80 +47,75 @@ Dependabot **security** alerts cover those instead, under Settings → Advanced 
 
 ---
 
-## 2a. Hardening the deploy key — TODO
+## 2a. The Actions deploy key is restricted — DONE (Aug 2026)
 
-**Status: not done.** Worth doing before adding club members as collaborators (§3).
+**The problem this solved.** `DEPLOY_SSH_KEY` used to be an unrestricted shell key
+for `mark`, and `mark` has `NOPASSWD: ALL` sudo — so that one Actions secret was
+effectively passwordless root on the server. Anyone with write access to
+`mark-iid/nharcweb` could push a workflow change that printed the secret into the
+Actions log, and that includes any CMS editor added as a collaborator (§3), since
+a collaborator gets the whole repo, not just `src/content/`.
 
-`DEPLOY_SSH_KEY` is a full-shell key for `mark`, and `mark` has `NOPASSWD: ALL`
-sudo on the box — so that one Actions secret is effectively passwordless root on
-nharc.org. Anyone with write access to `mark-iid/nharcweb` can push a workflow
-change that prints the secret into the Actions log, and that includes a CMS
-editor added as a collaborator (a collaborator gets the whole repo, not just
-`src/content/`).
+**What was done.** The deploy key was rotated and the new one locked to a single
+capability — write into the web root, nothing else. Current state:
 
-The key is line 2 of the server's `~/.ssh/authorized_keys` (comment
-`gh-actions-deploy-nharc`). It already carries
-`no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding`, but **no
-`command=`** — so `ssh -i deploy_key mark@nharc.org '<anything>'` still runs.
+- `~/.ssh/authorized_keys` on the server has two lines:
+  1. your personal key (`mark@Mark.localdomain`) — unrestricted, unchanged.
+  2. the CI key (`gh-actions-deploy-nharc-2026-08`), prefixed with
+     `command="/usr/bin/rrsync -wo /var/www/nharc"` plus the existing
+     `no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding`.
+- The `DEPLOY_PATH` secret is now **`.`**, not `/var/www/nharc` — `rrsync` `chdir`s
+  into the restricted directory and strips a leading `/`, so the workflow must send
+  a relative path. The workflow file itself did not change.
+- The old unrestricted key was removed once two CI runs went green.
+- Backups of the previous `authorized_keys` are on the server as
+  `~/.ssh/authorized_keys.bak-20260827-212527` and `.bak-preremove`.
 
-### Fix: lock the key to "rsync into the web root", nothing else
+Verified at the time: the key cannot run a command (`SSH_ORIGINAL_COMMAND='id' is
+not rsync`), cannot open a shell, cannot *read* anything back down (`-wo` —
+so it can't be used to exfiltrate), and cannot escape the directory (`..` rejected).
+Writes and `--delete` work normally.
 
-`rrsync` — the restricted-rsync wrapper that ships with rsync — is already
-installed at `/usr/bin/rrsync` (rsync 3.1.3). Prepend a forced command to that
-one key's option list:
+> The residual risk is now bounded: a leaked `DEPLOY_SSH_KEY` lets someone
+> **overwrite the website**, which a repo collaborator can already do by committing.
+> It no longer gets them the server. Note `mark` still has `NOPASSWD: ALL` sudo —
+> that's reachable from your personal key, not from CI.
 
-```
-command="/usr/bin/rrsync -wo /var/www/nharc",no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding ssh-ed25519 AAAA…  gh-actions-deploy-nharc
-```
+### Gotcha: you can't test this key from your Mac
 
-`-wo` is write-only: uploads are allowed, reads and arbitrary commands are not.
-`--delete` is still permitted, so the deploy itself behaves exactly as before.
+macOS now ships Apple's **openrsync** as `/usr/bin/rsync`, which sends
+`--dirs` in its server invocation. `rrsync` doesn't allow that option, so any
+rsync from the Mac using the restricted key fails with
+`invalid rsync-command syntax or options`. This is a client incompatibility, not a
+misconfiguration — GNU rsync (what the Actions runner uses) works fine.
 
-**One matching change is required in GitHub, or the deploy breaks.** rrsync
-`chdir`s into the restricted directory and strips a leading `/` from whatever
-path the client asks for, so the workflow has to send a *relative* path:
+`./deploy/deploy.sh` is unaffected: it authenticates with your personal key, which
+has no forced command. If you ever need to exercise the restricted key by hand, use
+a GNU rsync — easiest is to run it from the server itself, or `brew install rsync`
+and call `/opt/homebrew/bin/rsync` explicitly.
 
-- Change the `DEPLOY_PATH` Actions secret from `/var/www/nharc` to `.`
-  (the workflow appends a `/`, giving `mark@nharc.org:./`).
+### Rotating the CI key again
 
-`./deploy/deploy.sh` from your Mac is unaffected — it authenticates with your own
-key (line 1 of `authorized_keys`, no forced command) and keeps using the
-absolute path.
-
-### Doing it without locking yourself out
-
-Edit `authorized_keys` from a session you leave open, and verify before closing it:
+Zero-downtime recipe (the old key keeps working until the last step):
 
 ```bash
-ssh mark@nharc.org                      # keep this window open
-cp ~/.ssh/authorized_keys ~/.ssh/authorized_keys.bak
-nano ~/.ssh/authorized_keys             # prepend command="…" to line 2 only
+ssh-keygen -t ed25519 -N '' -C 'gh-actions-deploy-nharc-YYYY-MM' -f /tmp/newkey
+# append the new PUBLIC half to the server, restricted:
+printf 'command="/usr/bin/rrsync -wo /var/www/nharc",no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding %s\n' \
+  "$(cat /tmp/newkey.pub)" | ssh mark@nharc.org 'cp ~/.ssh/authorized_keys ~/.ssh/authorized_keys.bak && cat >> ~/.ssh/authorized_keys'
+gh secret set DEPLOY_SSH_KEY --repo mark-iid/nharcweb < /tmp/newkey
+gh workflow run deploy.yml --repo mark-iid/nharcweb --ref main   # must go green
+# only then: remove the old key line from ~/.ssh/authorized_keys
+rm -P /tmp/newkey /tmp/newkey.pub
 ```
 
-Then, from a *second* terminal, with a copy of the deploy private key:
+### If you ever need more than this
 
-```bash
-ssh -i /path/to/deploy_key mark@nharc.org 'id'      # must FAIL now
-rsync -az --delete -e "ssh -i /path/to/deploy_key" \
-      dist/ mark@nharc.org:./                        # must still SUCCEED
-```
-
-If either check comes out the wrong way, restore `authorized_keys.bak` from the
-still-open first session. Update the `DEPLOY_PATH` secret in the same sitting.
-
-Optional audit trail: `touch ~/rrsync.log` on the server and rrsync appends a
-line for every deploy. It lives in `$HOME`, outside the web root, so the
-`--delete` won't eat it.
-
-### Alternative: gate the secrets behind an Environment
-
-GitHub → Settings → Environments → new environment (e.g. `production`) holding
-the four `DEPLOY_*` secrets, with **Required reviewers = you**; then add
-`environment: production` to the `deploy:` job. Runs pause for your approval
-before the secrets are injected, so a pushed workflow change can't quietly
-exfiltrate them. The catch is that it costs a click per deploy — *including every
-CMS edit*, which is too much friction for this site. The forced command above is
-the better fit; this is here in case the threat model changes.
+GitHub → Settings → Environments → an environment (e.g. `production`) holding the
+`DEPLOY_*` secrets with **Required reviewers = you**, plus `environment: production`
+on the `deploy:` job, makes every run pause for your approval before the secrets are
+injected. It costs a click per deploy *including every CMS edit*, which is too much
+friction for this site — noted only in case the threat model changes.
 
 ---
 
@@ -151,7 +146,8 @@ Edits are committed under each editor's own GitHub identity. Remove someone by r
 them as a collaborator (`gh api --method DELETE …`). Note: a collaborator has write
 access to the **whole repo** (code + content), not just the CMS — add only people you
 trust accordingly. Write access also means they can read the deploy secrets by editing
-the workflow; see **§2a** for the fix that limits the blast radius.
+the workflow — but see **§2a**: the deploy key is restricted to writing the web root,
+so the worst they can do is what they could already do by committing.
 
 ### The self-hosted OAuth relay — configured
 A tiny stdlib-Python relay (`deploy/oauth-relay.py`) runs as **`nharc-oauth.service`**
