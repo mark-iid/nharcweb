@@ -1,0 +1,17 @@
+# Keeps the pinned action versions in .github/workflows/ from rotting.
+#
+# Deliberately github-actions only. npm version bumps are *not* tracked here:
+# the site has two direct dependencies, and Dependabot security alerts (repo
+# Settings -> Advanced Security) already cover the case that actually matters.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    # One combined PR per month rather than one per action.
+    groups:
+      actions:
+        patterns: ['*']
+    commit-message:
+      prefix: CI
