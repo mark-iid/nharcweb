@@ -1,5 +1,9 @@
 # NHARC Website (W3EXW)
 
+[![Build & Deploy](https://github.com/mark-iid/nharcweb/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/mark-iid/nharcweb/actions/workflows/deploy.yml)
+[![Site](https://img.shields.io/website?url=https%3A%2F%2Fnharc.org&label=nharc.org&up_message=up&down_message=down)](https://nharc.org)
+[![Built with Astro](https://img.shields.io/badge/built%20with-Astro-BC52EE?logo=astro&logoColor=white)](https://astro.build)
+
 Modern website for the **North Hills Amateur Radio Club**, built with
 [Astro](https://astro.build). It's a static site — the server just serves plain
 files, so it's fast, secure, and light enough to run comfortably on a small box.
