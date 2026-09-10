@@ -2,7 +2,7 @@
 title: NHARC Fall POTA Activation and Picnic
 date: 2026-08-26T23:40
 summary: |-
-  Saturday, October 17, 2026 at Moraine State Park, South Shore Day Use Area, Pleasant Valley Pavilion No. 2. We have the pavilion from 8am to 8pm (exact start and end times TBD).
+  Saturday, October 17, 2026 at Moraine State Park, South Shore Day Use Area, Pleasant Valley Pavilion No. 2. We have the pavilion from 8am to 8pm (anticipated start time is 10am).
 
   Family members are welcome, and so is anyone thinking about joining the club. We need a head count before the picnic, so if you plan to attend, email Gary at pota@nharc.org and let him know how many are coming.
 pinned: false
