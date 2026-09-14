@@ -19,3 +19,7 @@ deploy/*.key
 
 # Source photos (originals) — only the optimized versions in public/ ship
 pictures/
+
+# Python bytecode (deploy/oauth-relay.py)
+__pycache__/
+*.pyc
