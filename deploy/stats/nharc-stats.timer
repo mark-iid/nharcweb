@@ -1,0 +1,15 @@
+[Unit]
+Description=Nightly nharc.org traffic report
+Documentation=https://github.com/mark-iid/nharcweb/blob/main/deploy/stats/README.md
+
+[Timer]
+# 03:20 local time. RandomizedDelaySec keeps it off the exact minute in case
+# anything else on the box wakes up at 03:20 too.
+OnCalendar=*-*-* 03:20:00
+RandomizedDelaySec=600
+
+# If the box was down at 03:20, render on the next boot rather than skipping.
+Persistent=true
+
+[Install]
+WantedBy=timers.target

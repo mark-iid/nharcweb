@@ -1,0 +1,45 @@
+[Unit]
+Description=Render the nharc.org GoAccess traffic report
+Documentation=https://github.com/mark-iid/nharcweb/blob/main/deploy/stats/README.md
+After=caddy.service
+
+[Service]
+Type=oneshot
+
+# Runs as caddy so it can read caddy's own access logs and write into the
+# report directory without any of it being root-owned.
+User=caddy
+Group=caddy
+
+# This box has 476 MB and no swap. A full re-parse of the retained logs is
+# normally tiny, but a bot flood could balloon GoAccess's in-memory hashes.
+# The cap means a runaway report job dies on its own instead of letting the
+# OOM killer pick a victim — which last time was the web server.
+MemoryMax=192M
+MemorySwapMax=0
+
+# The report is never urgent; never let it compete with serving the site.
+Nice=15
+IOSchedulingClass=idle
+CPUSchedulingPolicy=idle
+
+# Re-parse every retained log (Caddy rolls and gzips them; GoAccess reads .gz
+# directly). A full recompute each night is simpler than incremental state and
+# cannot drift or double-count.
+ExecStart=/bin/sh -c '/usr/local/bin/goaccess --config-file=/etc/goaccess/nharc.conf /var/log/caddy/access.log $(ls -1r /var/log/caddy/access-*.log.gz 2>/dev/null | head -n 12)'
+
+# Hardening: this job needs to read one log directory and write one web
+# directory, nothing else.
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+ReadWritePaths=/var/www/nharc-stats
+ReadOnlyPaths=/var/log/caddy
+
+[Install]
+WantedBy=multi-user.target

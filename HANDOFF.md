@@ -19,6 +19,9 @@ over when you're ready, and the content that still needs a human to verify.
   relay, section 3). Edits commit to `main` and auto-deploy.
 - The site wears the club's **green & gold identity** (seal, tower-mark logo,
   self-hosted fonts). Baseline security headers (HSTS, nosniff, etc.) are set in Caddy.
+- **Traffic statistics** are collected and reported nightly — section 8.
+- **News feed (RSS)** at `/rss.xml`, linked in the footer and auto-discovered by
+  feed readers from every page.
 
 **Redeploy anytime** from your Mac: `./deploy/deploy.sh` (builds + rsyncs).
 
@@ -303,3 +306,47 @@ The old install was an abandoned "The7"-theme build (20 pages, a portfolio, and 
 media files that were mostly theme demo filler). The only real club asset in it was
 the masthead image, which also still lives on the old site at
 `nharc.org/art/masthead-trim.jpg`. Keep or delete `~/wp-backup/` at your discretion.
+
+---
+
+## 8. Traffic statistics — LIVE (Sep 2026)
+
+Caddy writes a JSON access log; a nightly systemd timer runs **GoAccess** over it
+and renders a report served at **https://nharc.org/stats**, behind basic auth
+(user `nharc`; the password was printed once by the installer). There is no
+JavaScript tracker on the site, no cookies, and no third-party service, so
+nothing here needs a consent banner.
+
+Full detail, including the operating commands and why each choice was made, is in
+**`deploy/stats/README.md`**. The short version:
+
+| Thing | Where |
+|---|---|
+| Log | `/var/log/caddy/access.log` (JSON, ~90-day rotation, gzipped by Caddy) |
+| Nightly job | `nharc-stats.timer` → `nharc-stats.service`, 03:20 local |
+| Report | `/var/www/nharc-stats/index.html` → `/stats` |
+| Credentials | `/etc/caddy/stats-auth.conf` — **not in git**, this repo is public |
+| Install / re-install | `ssh mark@nharc.org 'bash -s' < deploy/stats/install.sh` |
+
+Two gotchas worth knowing before you touch it:
+
+- **Never run `caddy validate` or `caddy run` as root on this box.** Doing so
+  creates `/var/log/caddy/access.log` owned by root, after which the `caddy` user
+  cannot open it and `systemctl reload caddy` fails with `permission denied`. The
+  site stays up on the old config, but the log stops. Fix with
+  `sudo chown caddy:caddy /var/log/caddy/access.log && sudo systemctl reload caddy`.
+- **GoAccess is built from source** (`install.sh` does it). Ubuntu 20.04 is EOL,
+  so `deb.goaccess.io` dropped the `focal` suite and the distro package (1.3, from
+  2019) cannot parse JSON logs at all.
+
+The report job is capped at `MemoryMax=192M` on purpose. This box has 476 MB and
+no swap, and the last OOM event killed the web server — the cap means a runaway
+report dies instead of the site.
+
+### Still worth adding
+
+- **Google Search Console** (and Bing Webmaster Tools) — free, and the only place
+  you can see what people *searched for* to find the club. Verify the domain, then
+  submit `https://nharc.org/sitemap-index.xml`. Log analysis cannot give you this.
+- A **monthly plain-language summary** of the report is a natural thing to
+  automate on top of `/stats` rather than reading the dashboard by hand.

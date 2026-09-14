@@ -25,11 +25,39 @@ nharc.org, newweb.nharc.org {
 		reverse_proxy 127.0.0.1:8402
 	}
 
+	# Structured access log, consumed nightly by GoAccess (see deploy/stats/).
+	# Caddy rolls and gzips these itself — no logrotate needed.
+	log {
+		output file /var/log/caddy/access.log {
+			roll_size 10MiB
+			roll_keep 12
+			roll_keep_for 2160h
+		}
+		format json
+	}
+
+	# Private traffic report. GoAccess writes /var/www/nharc-stats/index.html
+	# nightly; credentials live in /etc/caddy/stats-auth.conf, which is NOT in
+	# this repo (it's public) and must exist or Caddy will refuse to start.
+	handle_path /stats* {
+		import /etc/caddy/stats-auth.conf
+		root * /var/www/nharc-stats
+		file_server
+		# Keep our own report views out of the numbers they report on.
+		log_skip
+	}
+
 	# Static site.
 	handle {
 		# Long-cache the immutable hashed assets Astro emits under /_astro/.
 		@astro path /_astro/*
 		header @astro Cache-Control "public, max-age=31536000, immutable"
+
+		# Serve the news feed as a feed. By extension alone Caddy would call it
+		# text/xml, which readers tolerate but which isn't the registered type.
+		@feed path /rss.xml
+		header @feed Content-Type "application/rss+xml; charset=utf-8"
+
 		file_server
 	}
 
@@ -46,4 +74,5 @@ www.nharc.org, nharc.com, www.nharc.com {
 	redir https://nharc.org{uri} permanent
 }
 
-# Access + runtime logs go to journald: `journalctl -u caddy`.
+# Runtime/error logs go to journald: `journalctl -u caddy`.
+# Access logs are the JSON file above: /var/log/caddy/access.log.
