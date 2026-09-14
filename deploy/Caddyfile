@@ -18,6 +18,9 @@ nharc.org, newweb.nharc.org {
 	}
 
 	# CMS "Sign In with GitHub" OAuth relay (nharc-oauth.service on :8402).
+	# Also covers the /stats sign-in endpoints (/auth/stats/*). Keeping them
+	# under /auth is deliberate: any path beginning "stats" would collide with
+	# the /stats* route below, which serves the report itself.
 	handle /auth* {
 		reverse_proxy 127.0.0.1:8402
 	}
@@ -36,11 +39,16 @@ nharc.org, newweb.nharc.org {
 		format json
 	}
 
-	# Private traffic report. GoAccess writes /var/www/nharc-stats/index.html
-	# nightly; credentials live in /etc/caddy/stats-auth.conf, which is NOT in
-	# this repo (it's public) and must exist or Caddy will refuse to start.
+	# Private traffic report, gated on GitHub identity by the OAuth relay:
+	# whoever can push to the repo (i.e. whoever can edit the site in the CMS)
+	# can read it. The relay answers this probe 2xx for a valid session cookie
+	# and 302-to-sign-in otherwise; Caddy hands any non-2xx back to the browser,
+	# so an unauthenticated visitor lands in the GitHub flow.
 	handle_path /stats* {
-		import /etc/caddy/stats-auth.conf
+		forward_auth 127.0.0.1:8402 {
+			uri /auth/stats/verify
+			copy_headers X-Stats-User
+		}
 		root * /var/www/nharc-stats
 		file_server
 		# Keep our own report views out of the numbers they report on.

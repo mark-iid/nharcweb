@@ -10,7 +10,9 @@ set -euo pipefail
 
 GOACCESS_VERSION=1.9.4
 STATS_DIR=/var/www/nharc-stats
-AUTH_FILE=/etc/caddy/stats-auth.conf
+OAUTH_ENV=/etc/nharc-oauth.env
+RELAY_PATH=/opt/nharc-oauth/oauth-relay.py
+STATS_REPO=mark-iid/nharcweb
 
 if [ "$(id -u)" -ne 0 ]; then
   echo "Re-running under sudo..." >&2
@@ -57,31 +59,35 @@ echo "==> GoAccess config /etc/goaccess/nharc.conf"
 install -d -m 0755 /etc/goaccess
 install -m 0644 "$(dirname "$0")/goaccess.conf" /etc/goaccess/nharc.conf
 
-# --- /stats credentials ---------------------------------------------------
-# Kept out of the repo: nharcweb is a public repo, and while a bcrypt hash is
-# not directly reversible there is no reason to publish one.
-if [ ! -f "$AUTH_FILE" ]; then
-  echo "==> Generating /stats credentials"
-  pass=$(head -c 18 /dev/urandom | base64 | tr -d '/+=' | head -c 20)
-  hash=$(caddy hash-password --plaintext "$pass")
-  cat > "$AUTH_FILE" <<EOF
-# Credentials for https://nharc.org/stats — imported by /etc/caddy/Caddyfile.
-# Regenerate:  caddy hash-password --plaintext 'newpassword'
-basic_auth {
-	nharc ${hash}
-}
-EOF
-  chown root:caddy "$AUTH_FILE"
-  chmod 0640 "$AUTH_FILE"
-  echo ""
-  echo "    ####################################################"
-  echo "    #  /stats login   user: nharc"
-  echo "    #                 pass: ${pass}"
-  echo "    #  Save this now — it is not stored anywhere else."
-  echo "    ####################################################"
-  echo ""
+# --- /stats access ---------------------------------------------------------
+# /stats is gated on GitHub identity by the OAuth relay (deploy/oauth-relay.py):
+# whoever can push to the repo can read the report. That needs an HMAC key for
+# the session cookies. Generated here if the relay's env file lacks one.
+if ! grep -q "^SESSION_SECRET=" "$OAUTH_ENV" 2>/dev/null; then
+  echo "==> Generating SESSION_SECRET in ${OAUTH_ENV}"
+  if [ ! -f "$OAUTH_ENV" ]; then
+    echo "    ERROR: ${OAUTH_ENV} does not exist — set up the OAuth relay first" >&2
+    exit 1
+  fi
+  secret=$(head -c 32 /dev/urandom | base64 | tr -d '\n')
+  printf 'SESSION_SECRET=%s\n' "$secret" >> "$OAUTH_ENV"
+  printf 'STATS_REPO=%s\n' "$STATS_REPO" >> "$OAUTH_ENV"
+  chown root:root "$OAUTH_ENV"
+  chmod 0600 "$OAUTH_ENV"
+  restart_relay=yes
 else
-  echo "==> Keeping existing credentials in ${AUTH_FILE}"
+  echo "==> SESSION_SECRET already present in ${OAUTH_ENV}"
+  restart_relay=yes
+fi
+
+echo "==> Installing relay to ${RELAY_PATH} and restarting nharc-oauth"
+install -d -m 0755 "$(dirname "$RELAY_PATH")"
+install -m 0644 -o root -g root "$(dirname "$0")/../oauth-relay.py" "$RELAY_PATH"
+if [ "${restart_relay:-}" = yes ]; then
+  systemctl restart nharc-oauth
+  sleep 1
+  systemctl is-active --quiet nharc-oauth && echo "    nharc-oauth is running" \
+    || { echo "    ERROR: nharc-oauth failed to start"; journalctl -u nharc-oauth -n 20 --no-pager; exit 1; }
 fi
 
 # --- systemd --------------------------------------------------------------
@@ -96,4 +102,4 @@ echo ""
 echo "Done. Deploy the Caddyfile (deploy/deploy.sh installs the site, but the"
 echo "Caddyfile is copied manually) and reload Caddy, then:"
 echo "  sudo systemctl start nharc-stats.service   # render the first report now"
-echo "  https://nharc.org/stats"
+echo "  https://nharc.org/stats                    # sign in with GitHub"

@@ -312,10 +312,21 @@ the masthead image, which also still lives on the old site at
 ## 8. Traffic statistics — LIVE (Sep 2026)
 
 Caddy writes a JSON access log; a nightly systemd timer runs **GoAccess** over it
-and renders a report served at **https://nharc.org/stats**, behind basic auth
-(user `nharc`; the password was printed once by the installer). There is no
-JavaScript tracker on the site, no cookies, and no third-party service, so
-nothing here needs a consent banner.
+and renders a report served at **https://nharc.org/stats**. There is no
+JavaScript tracker on the site and no third-party analytics service, so nothing
+here needs a consent banner.
+
+**Signing in: it's GitHub, same as the CMS.** Whoever can push to the repo can
+read the report — the same people, checked live against GitHub at each sign-in,
+so there is no separate password and no second list to keep in sync. Visit
+`/stats`, you get bounced through GitHub, and you come back to the report. Add
+or remove a stats viewer exactly as you add or remove an editor (§3).
+
+The flip side is worth saying plainly: **there is no view-only tier.** Adding
+someone so they can see traffic numbers also gives them write access to the
+whole repo. If you ever want to hand someone stats *without* edit rights, the
+relay needs a separate allowlist instead of the push-access check — see
+`deploy/stats/README.md`.
 
 Full detail, including the operating commands and why each choice was made, is in
 **`deploy/stats/README.md`**. The short version:
@@ -325,10 +336,11 @@ Full detail, including the operating commands and why each choice was made, is i
 | Log | `/var/log/caddy/access.log` (JSON, ~90-day rotation, gzipped by Caddy) |
 | Nightly job | `nharc-stats.timer` → `nharc-stats.service`, 03:20 local |
 | Report | `/var/www/nharc-stats/index.html` → `/stats` |
-| Credentials | `/etc/caddy/stats-auth.conf` — **not in git**, this repo is public |
+| Gate | `forward_auth` → the OAuth relay's `/auth/stats/verify` |
+| Session key | `SESSION_SECRET` in `/etc/nharc-oauth.env` — **not in git**, this repo is public |
 | Install / re-install | `ssh mark@nharc.org 'bash -s' < deploy/stats/install.sh` |
 
-Two gotchas worth knowing before you touch it:
+Three gotchas worth knowing before you touch it:
 
 - **Never run `caddy validate` or `caddy run` as root on this box.** Doing so
   creates `/var/log/caddy/access.log` owned by root, after which the `caddy` user
@@ -338,6 +350,9 @@ Two gotchas worth knowing before you touch it:
 - **GoAccess is built from source** (`install.sh` does it). Ubuntu 20.04 is EOL,
   so `deb.goaccess.io` dropped the `focal` suite and the distro package (1.3, from
   2019) cannot parse JSON logs at all.
+- **The `/stats` gate lives inside the CMS OAuth relay** (`nharc-oauth`), so that
+  service now has two jobs. If it stops, editors lose "Sign In with GitHub" *and*
+  `/stats` becomes unreachable. `systemctl status nharc-oauth` covers both.
 
 The report job is capped at `MemoryMax=192M` on purpose. This box has 476 MB and
 no swap, and the last OOM event killed the web server — the cap means a runaway
