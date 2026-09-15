@@ -5,6 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>NHARC Content Editor</title>
+    <style>
+      /*
+        Sveltia styles its shared text field with `word-break: break-all`, which
+        wraps in the middle of words — "https://..." becomes "http" / "s://...".
+        Wrap at spaces instead, and only break inside a word when a single token
+        (a long URL, say) genuinely cannot fit on a line.
+
+        `.clone` must get the identical treatment: it is a hidden twin of the
+        field that Sveltia measures to auto-size the box. If the two wrap
+        differently the field is sized to the wrong number of lines and the text
+        is clipped, so never change one of these selectors without the other.
+
+        !important is needed because Sveltia appends its own stylesheet to
+        <head> at runtime, i.e. after this block, and its selector is no less
+        specific than ours.
+      */
+      textarea,
+      .clone {
+        word-break: normal !important;
+        overflow-wrap: break-word !important;
+      }
+    </style>
   </head>
   <body>
     <!--
