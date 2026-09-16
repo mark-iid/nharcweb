@@ -5,10 +5,7 @@
 [![Built with Astro](https://img.shields.io/badge/built%20with-Astro-BC52EE?logo=astro&logoColor=white)](https://astro.build)
 
 Website for the North Hills Amateur Radio Club, built with
-[Astro](https://astro.build). It's a static site, so the server is just handing
-out plain files. That matters more than it sounds like it should: the box this
-runs on has 476 MB of RAM and no swap, and an earlier WordPress attempt got
-OOM-killed on it.
+[Astro](https://astro.build). It's a static site, served by Caddy.
 
 Live at https://nharc.org.
 
