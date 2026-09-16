@@ -20,10 +20,10 @@ ssh mark@nharc.org 'bash -s' < deploy/stats/install.sh   # from a checkout
 sudo ./install.sh
 ```
 
-It's idempotent, so re-running it after changing `goaccess.conf` or the units is
-fine. On a first run it appends a generated `SESSION_SECRET` (and `STATS_REPO`)
+It's idempotent, so re-running it after changing `goaccess.conf` or the units
+is safe. On a first run it appends a generated `SESSION_SECRET` (and `STATS_REPO`)
 to `/etc/nharc-oauth.env`, installs the relay, and restarts `nharc-oauth`.
-There's no password to write down anywhere, since sign-in is GitHub.
+There's no password to record anywhere, since sign-in is GitHub.
 
 It does not install the Caddyfile. Do that separately:
 
@@ -34,9 +34,9 @@ ssh mark@nharc.org 'sudo install -m 0644 /tmp/Caddyfile /etc/caddy/Caddyfile \
   && sudo systemctl reload caddy'
 ```
 
-That `chown` isn't decoration. If you run `caddy validate` or `caddy run` as
-root at any point, it creates `access.log` owned by root with mode 0600, and
-then the `caddy` user can't open it. The next reload fails with `permission
+That `chown` matters. If you run `caddy validate` or `caddy run` as root at any
+point, it creates `access.log` owned by root with mode 0600, and the `caddy`
+user can then no longer open it. The next reload fails with `permission
 denied`. The running server keeps its old config when that happens, so the site
 stays up, but the new log never starts. Re-chown it and reload.
 
@@ -75,8 +75,8 @@ gh api --method PUT repos/mark-iid/nharcweb/collaborators/USERNAME
 gh api --method DELETE repos/mark-iid/nharcweb/collaborators/USERNAME
 ```
 
-Worth saying plainly: there is no view-only tier. Anyone you add so they can see
-traffic numbers also gets write access to the whole repo. If you want somebody
+Note that there is no view-only tier. Anyone you add so they can see traffic
+numbers also gets write access to the whole repo. If you want somebody
 to read stats without being able to edit the site, the relay would need its own
 allowlist instead of the `permissions.push` check.
 
@@ -96,7 +96,7 @@ The cookie only carries a username and an expiry, and it's rejected if either
 the signature or the expiry fails. A missing `SESSION_SECRET` fails closed, so
 nobody gets in rather than everybody.
 
-Two structural details that are easy to break by accident:
+Two structural details that are easy to break:
 
 A GitHub OAuth App has exactly one callback URL, and the CMS already owns
 `/callback`. Touching the OAuth App was the change most likely to break editor

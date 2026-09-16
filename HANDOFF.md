@@ -1,9 +1,9 @@
 # NHARC Website: Handoff & Operations
 
-This is everything that isn't in the code. How the live site is put together
+This covers everything that isn't in the code: how the live site is put together
 (GitHub CI and the browser CMS login are both done and working), what the DNS
-cutover involved, how the traffic stats work, and the content that still needs a
-human to look at it.
+cutover involved, how the traffic statistics work, and the content that still
+needs a human to verify it.
 
 ---
 
@@ -19,14 +19,13 @@ human to look at it.
 - Browser CMS is live at `/admin/`, and GitHub sign-in works (self-hosted OAuth
   relay, section 3). Edits commit to `main` and deploy on their own.
 - The site wears the club's green and gold identity (seal, tower-mark logo,
-  self-hosted fonts). Baseline security headers (HSTS, nosniff and friends) are
-  set in Caddy.
+  self-hosted fonts). Baseline security headers (HSTS, nosniff and the rest)
+  are set in Caddy.
 - Traffic statistics are collected and reported nightly. See section 8.
 - News feed (RSS) at `/rss.xml`, linked in the footer, and feed readers
   auto-discover it from every page.
 
-You can redeploy from your Mac any time with `./deploy/deploy.sh` (it builds and
-rsyncs).
+To redeploy from your Mac, run `./deploy/deploy.sh` (it builds and rsyncs).
 
 ---
 
@@ -45,7 +44,7 @@ Actions). They're listed here just in case the deploy key ever needs rotating:
 | `DEPLOY_SSH_KEY` | private half of the deploy key (public half is in the server's `~/.ssh/authorized_keys`) |
 | `DEPLOY_HOST` | `nharc.org` (was `newweb.nharc.org` before the cutover) |
 | `DEPLOY_USER` | `mark` |
-| `DEPLOY_PATH` | `.` and yes that's relative on purpose, see 2a (was `/var/www/nharc`) |
+| `DEPLOY_PATH` | `.`, relative on purpose, see 2a (was `/var/www/nharc`) |
 
 `.github/dependabot.yml` keeps the pinned action versions current, as one
 grouped PR a month, github-actions only. npm bumps aren't tracked (there are
@@ -99,8 +98,8 @@ options`. That's a client incompatibility and not a misconfiguration. GNU rsync
 
 `./deploy/deploy.sh` isn't affected, since it authenticates with your personal
 key, which has no forced command. If you ever do need to exercise the restricted
-key by hand, use a GNU rsync. Easiest is to just run it from the server itself,
-or `brew install rsync` and call `/opt/homebrew/bin/rsync` explicitly.
+key by hand, use a GNU rsync. Easiest is to run it from the server itself, or
+`brew install rsync` and call `/opt/homebrew/bin/rsync` explicitly.
 
 ### Rotating the CI key again
 
@@ -131,14 +130,14 @@ in case the threat model changes.
 ## 3. Browser CMS (Sveltia) login: live
 
 The editor is at `/admin/`. It commits edits to `main`, and Actions rebuilds and
-deploys. `config.yml` points at `mark-iid/nharcweb`. There are two ways to sign
-in and both work:
+deploys. `config.yml` points at `mark-iid/nharcweb`. There are two ways to sign in,
+and both work:
 
 - Sign In with GitHub (one click), backed by the self-hosted OAuth relay below.
   This is the normal path for editors.
 - Access Token, as a fallback. On the login screen choose *"Sign In Using Access
   Token"* and paste a fine-grained PAT (repo = `mark-iid/nharcweb`, Contents:
-  read/write). Handy if the relay is ever down.
+  read/write). Useful if the relay is ever down.
 
 ### Adding an editor
 
@@ -156,23 +155,23 @@ giving that account write access to the repo:
 Edits get committed under each editor's own GitHub identity. You remove someone
 by removing them as a collaborator (`gh api --method DELETE …`).
 
-One thing to be aware of: a collaborator has write access to the *whole repo*
-(code and content), not just the CMS, so only add people you trust that far.
+Note that a collaborator has write access to the *whole repo* (code and
+content), not just the CMS, so only add people you trust that far.
 Write access also means they could read the deploy secrets by editing the
 workflow. See section 2a though, the deploy key is restricted to writing the web
 root, so the worst they can do is what they could already do by committing.
 
 ### The self-hosted OAuth relay
 
-A small stdlib-only Python relay (`deploy/oauth-relay.py`) runs as
+A stdlib-only Python relay (`deploy/oauth-relay.py`) runs as
 `nharc-oauth.service` on `127.0.0.1:8402`, reverse-proxied by Caddy at `/auth`
 and `/callback`. The GitHub OAuth App exists and its Client ID and secret live in
 `/etc/nharc-oauth.env`. Its callback is `https://nharc.org/callback`, so "Sign In
 with GitHub" works at nharc.org/admin. Manage it with
 `systemctl status|restart nharc-oauth` and `journalctl -u nharc-oauth`.
 
-Heads up that this service now has a second job (it also gates `/stats`, see
-section 8), so if it stops, both things break.
+This service has a second job as of Sep 2026: it also gates `/stats` (section
+8). If it stops, both CMS login and the traffic report go down.
 
 To rotate or recreate the OAuth App (only if you need to): make a new OAuth App
 (GitHub → Settings → Developer settings → OAuth Apps) with Homepage
@@ -258,8 +257,8 @@ this box touches it, so the cutover was purely a DNS change you control.
 
 ## 5. Content that needs a human to verify
 
-Some of the old site's content was clearly dated. Worth confirming and updating
-(in the CMS or in the data files):
+Some of the old site's content was clearly dated. Confirm and update the
+following, either in the CMS or in the data files:
 
 - [x] Officers roster, updated to the 2026 elected slate
       (`src/data/officers.json`). A few entries still have first names only (Joe
@@ -355,9 +354,8 @@ separate password and no second list to keep in sync. Visit `/stats`, you get
 bounced through GitHub, and you come back to the report. Adding or removing a
 stats viewer is exactly the same as adding or removing an editor (section 3).
 
-The flip side is worth saying plainly: there is no view-only tier. Adding
-somebody so they can see traffic numbers also gives them write access to the
-whole repo. If you ever want to hand someone stats *without* edit rights, the
+The tradeoff is that there is no view-only tier. Adding somebody so they can
+see traffic numbers also gives them write access to the whole repo. If you ever want to hand someone stats *without* edit rights, the
 relay needs its own allowlist instead of the push-access check. See
 `deploy/stats/README.md`.
 
@@ -404,60 +402,90 @@ runaway report dies instead of the site.
 
 ## 9. Membership web form (prototype only, Sep 2026)
 
-There's a design preview at `/membership/preview`. It's noindex, it's excluded
-from the sitemap, it isn't linked from the nav or the footer, and the submit
-button is disabled. Nothing is wired up behind it. The idea is to look at the
-layout and decide whether it's worth building the back end.
+A design preview exists at `/membership/preview`. It's noindex, excluded from the
+sitemap, unlinked from the nav and footer, and the submit button is disabled.
+Nothing is wired up behind it. Its purpose is to evaluate the layout before
+committing to a back end.
 
 Source is `src/pages/membership/preview.astro`. The fields match the current PDF
 (name, callsign, address, city, state, ZIP, home and cell phone, email, license
-class, ARRL member) plus a new/renewal toggle and a notes box. A honeypot field
-and a load-time stamp are already in the markup to show the shape of the
-anti-spam approach.
+class, ARRL member) plus a new/renewal toggle and a notes field. A honeypot input
+and a load-time stamp are in the markup to illustrate the anti-spam approach;
+nothing reads them yet.
 
-Things to settle before building the back end:
+Five questions need answering before any of this gets built: where the handler
+runs, how mail gets delivered, how spam is handled, whether callsigns are
+validated, and what happens to the donation form. Each is below, with a
+recommendation.
 
-The site is static, so nothing here can receive a POST today. Options are to
-extend the existing Python relay, stand up a separate small service, or use a
-hosted form service. My leaning is a separate service rather than the relay,
-because the relay is already load-bearing for CMS login and `/stats`, and a bug
-in public form handling shouldn't be able to take editor sign-in down with it.
+### Where the handler runs
 
-Email is the real risk, and it fails quietly. There's no MTA on the box, mail for
-nharc.org lives at `newvader.pageone.net`, and there's no DMARC record. The SPF
-record (`v=spf1 a mx include:_spf.google.com ip4:66.207.128.0/24 ~all`) does
-already authorize this server, via the `a` mechanism, since `nharc.org` resolves
-to `66.207.135.7`. Outbound port 25 is open too. Even so, authenticated
-submission through pageone on 587 is the safer route than direct-to-MX. The
-important part is to not depend on email alone: write every submission to a file
-on the server as well, so email is just the notification and the file is the
-record. Otherwise a broken credential means membership applications vanish and
-nobody finds out for months.
+The site is static, so nothing can accept a POST today. The options are to extend
+the existing Python relay, run a separate small service, or use a hosted form
+service. A separate service is the better choice. The relay is already
+load-bearing for CMS login and `/stats` (section 8), and a defect in public form
+handling should not be able to take editor sign-in down with it. Anything
+requiring a database is out on this hardware.
 
-Spam needs handling, and the dangerous part isn't junk submissions. If user input
-ever reaches the `To`, `From`, `Subject` or `Reply-To` headers unsanitized, then
-somebody can inject newlines and use the form as a spam relay, with our own SPF
-blessing it. The recipient has to be hardcoded, and CR/LF has to be stripped out
-of anything going near a header. For the junk itself, start with the honeypot,
-the time trap and an IP rate limit. Cloudflare Turnstile is the fallback if real
-spam shows up, but the site currently loads zero third-party scripts (which is
-why it needs no consent banner), so that's worth spending only if we have to.
+### Mail delivery
 
-Callsign lookup would be a nice touch, mostly for auto-fill rather than
-validation. callook.info is free and needs no key. It should be advisory and
-never blocking though, since brand new licensees lag in ULS, vanity calls change,
-club calls exist, foreign hams exist, and associate or family members may not be
-licensed at all. The current PDF doesn't require a valid callsign either.
+This is the highest risk in the design, because it fails silently. There's no MTA
+on the box, mail for nharc.org is hosted at `newvader.pageone.net`, and no DMARC
+record exists. SPF already authorizes this server:
+`v=spf1 a mx include:_spf.google.com ip4:66.207.128.0/24 ~all`, where the `a`
+mechanism covers `66.207.135.7`. Outbound port 25 is open.
 
-Don't collect payment details. Dues are check, Zelle or in person, and keeping it
-that way keeps us entirely out of PCI scope. The form captures intent to join,
-not money.
+Direct-to-MX would therefore work, but authenticated submission through pageone
+on port 587 is the safer route, since that mail is signed by infrastructure that
+already sends for the domain.
 
-Also worth remembering that `Membership-form.pdf` is really two forms (the club
-membership form, and a Repeater Association donation form for a separate 501(c)(3)
-with its own PO Box). Replacing "the PDF" with one webform would quietly drop the
-donation half, so that's a separate decision.
+The controlling requirement is not to depend on email at all. Every submission
+should be written to a file on the server as well, making email a notification
+and the file the record. Without that, an expired credential means membership
+applications disappear with no indication that anything is wrong.
 
-My recommendation is to keep the PDF *and* add the form rather than swapping one
-for the other. The PDF costs nothing to leave up, it's still what you'd hand out
-at a hamfest table, and it's a working fallback the day the form breaks.
+### Spam
+
+Two distinct problems, and the second is the serious one.
+
+Junk submissions are inevitable. A honeypot field, a minimum time-to-submit, and
+an IP rate limit handle most of it at no cost. Cloudflare Turnstile is the
+fallback if real spam appears. It's worth deferring, because the site currently
+loads no third-party scripts at all, which is why it needs no consent banner.
+
+Mail header injection is the actual vulnerability. If user input reaches the
+`To`, `From`, `Subject`, or `Reply-To` headers unsanitized, an attacker can embed
+newlines, add recipients, and use the form as a spam relay with the domain's own
+SPF authorizing it. The recipient must be hardcoded rather than derived from
+input, and CR/LF must be stripped from anything placed in a header. User content
+belongs in the body only.
+
+### Callsign validation
+
+Worth doing for auto-fill rather than validation. callook.info is free and
+requires no key, and populating name, address, and license class from a callsign
+removes most of the typing and eliminates transcription errors for the treasurer.
+
+It must be advisory and never blocking. New licensees lag in ULS, vanity calls
+change, club and trustee calls exist, foreign hams exist, and associate or family
+members may not be licensed at all. The current PDF does not require a valid
+callsign, so the form should not either.
+
+### Payment and the donation form
+
+The form should not collect payment details. Dues are paid by check, Zelle, or in
+person, and keeping it that way keeps the club entirely outside PCI scope. The
+form captures intent to join, not money.
+
+Separately, `Membership-form.pdf` contains two forms: the club membership form,
+and a Repeater Association donation form for a different 501(c)(3) with its own
+PO Box (15352). Replacing "the PDF" with a single webform would drop the donation
+half. Tax-deductible donations also imply an acknowledgment back to the donor.
+Treat it as a second decision rather than part of this one.
+
+### Recommendation
+
+Keep the PDF and add the form, rather than replacing one with the other. The PDF
+costs nothing to leave up, remains what gets handed out at a hamfest table, and
+serves as the fallback if the form breaks. PDFs are genuinely difficult to fill
+out on a phone, which is the strongest argument for adding the form at all.

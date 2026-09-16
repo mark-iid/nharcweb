@@ -13,14 +13,14 @@ Live at https://nharc.org.
 
 ## Editing content
 
-There are two ways in, depending on who you are.
+There are two ways to edit content.
 
 **In the browser.** Club volunteers edit at https://nharc.org/admin/ using
 Sveltia CMS. Sign in with GitHub, make your changes, and saving publishes on its
 own. No code involved. Getting someone editor access means adding their GitHub
 account to the repo (see [HANDOFF.md](HANDOFF.md) section 3).
 
-**In the files.** Everything is plain text if you'd rather edit it directly:
+**In the files.** Everything is plain text and can be edited directly:
 
 | What | Where |
 | --- | --- |
