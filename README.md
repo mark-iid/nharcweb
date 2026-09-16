@@ -4,24 +4,26 @@
 [![Site](https://img.shields.io/website?url=https%3A%2F%2Fnharc.org&label=nharc.org&up_message=up&down_message=down)](https://nharc.org)
 [![Built with Astro](https://img.shields.io/badge/built%20with-Astro-BC52EE?logo=astro&logoColor=white)](https://astro.build)
 
-Modern website for the **North Hills Amateur Radio Club**, built with
-[Astro](https://astro.build). It's a static site — the server just serves plain
-files, so it's fast, secure, and light enough to run comfortably on a small box.
+Website for the North Hills Amateur Radio Club, built with
+[Astro](https://astro.build). It's a static site, so the server is just handing
+out plain files. That matters more than it sounds like it should: the box this
+runs on has 476 MB of RAM and no swap, and an earlier WordPress attempt got
+OOM-killed on it.
 
-**Live (staging):** https://nharc.org
+Live at https://nharc.org.
 
 ---
 
-## Editing content — two ways
+## Editing content
 
-### 1. In the browser (for non-technical editors)
-Club volunteers edit the site in the browser at **https://nharc.org/admin/** —
-a friendly form-based editor (Sveltia CMS). Sign in with GitHub, make changes, and
-saving publishes automatically. No coding required. Editor access is granted by adding
-the person's GitHub account to the repo (see [HANDOFF.md](HANDOFF.md)).
+There are two ways in, depending on who you are.
 
-### 2. In the code (for developers)
-Content lives in plain files you can edit directly:
+**In the browser.** Club volunteers edit at https://nharc.org/admin/ using
+Sveltia CMS. Sign in with GitHub, make your changes, and saving publishes on its
+own. No code involved. Getting someone editor access means adding their GitHub
+account to the repo (see [HANDOFF.md](HANDOFF.md) section 3).
+
+**In the files.** Everything is plain text if you'd rather edit it directly:
 
 | What | Where |
 | --- | --- |
@@ -49,14 +51,24 @@ npm run preview  # serve the built site
 
 ## Deploying
 
-- **Automatic (recommended):** push to `main` → GitHub Actions builds and deploys
-  (`.github/workflows/deploy.yml`). CMS edits trigger this too.
-- **Manual:** `./deploy/deploy.sh` builds locally and rsyncs `dist/` to the server.
+Push to `main` and GitHub Actions builds and deploys it
+(`.github/workflows/deploy.yml`). CMS edits are just commits, so they trigger
+the same thing. That's the normal path.
+
+If you need to push something out by hand, `./deploy/deploy.sh` builds locally
+and rsyncs `dist/` to the server. It refuses to run if your checkout is behind
+`origin/main`, which is deliberate: the rsync uses `--delete`, so deploying from
+a stale tree would wipe files that were added since (images uploaded through the
+CMS, usually).
 
 ## How it's served
 
-The server runs [Caddy](https://caddyserver.com) (`deploy/Caddyfile`), serving
-`/var/www/nharc` with automatic HTTPS via Let's Encrypt.
+[Caddy](https://caddyserver.com) serves `/var/www/nharc` with automatic HTTPS
+from Let's Encrypt. Config is `deploy/Caddyfile`, and the installed copy lives
+at `/etc/caddy/Caddyfile`.
+
+Caddy also writes a JSON access log that feeds a nightly traffic report at
+`/stats`. See [deploy/stats/README.md](deploy/stats/README.md).
 
 ## Project layout
 
@@ -74,8 +86,9 @@ public/
   fonts/        Self-hosted webfonts (Barlow Semi Condensed, Public Sans)
   images/       Images (club seal, ARRL badge, and the club/ photo set)
   uploads/      CMS-uploaded media
-deploy/         Caddyfile + deploy.sh
+deploy/         Caddyfile, deploy.sh, oauth-relay.py, stats/
 ```
 
-See [HANDOFF.md](HANDOFF.md) for GitHub/CI setup, the CMS login setup, the DNS
-cutover to `nharc.org`, and the list of content that still needs verifying.
+[HANDOFF.md](HANDOFF.md) has the rest: GitHub and CI setup, how CMS login
+actually works, the DNS cutover, the traffic stats, and the content that still
+needs somebody to verify it.
