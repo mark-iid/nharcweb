@@ -1,13 +1,12 @@
-# NHARC Website: Handoff & Operations
+# NHARC Website: Operations
 
-This covers everything that isn't in the code: how the live site is put together
-(GitHub CI and the browser CMS login are both done and working), what the DNS
-cutover involved, how the traffic statistics work, and the content that still
-needs a human to verify it.
+Reference for running the site. Deployment, CMS login, the traffic report, the
+DNS cutover, and what's still outstanding. This is the state and the decisions
+that aren't visible in the code.
 
 ---
 
-## 1. What's done and live
+## 1. Current state
 
 - Static Astro site, deployed to https://nharc.org with a valid Let's Encrypt
   cert.
@@ -25,11 +24,11 @@ needs a human to verify it.
 - News feed (RSS) at `/rss.xml`, linked in the footer, and feed readers
   auto-discover it from every page.
 
-To redeploy from your Mac, run `./deploy/deploy.sh` (it builds and rsyncs).
+Manual redeploy is `./deploy/deploy.sh` (builds and rsyncs).
 
 ---
 
-## 2. GitHub and automatic deploys (done)
+## 2. GitHub and automatic deploys
 
 The repo is `mark-iid/nharcweb`, and it's public. Every push to `main` kicks off
 GitHub Actions, which builds the site and rsyncs it to the server over SSH
@@ -53,7 +52,7 @@ instead, under Settings → Advanced Security.
 
 ---
 
-## 2a. The Actions deploy key is restricted (done, Aug 2026)
+## 2a. Restricted Actions deploy key (Aug 2026)
 
 The problem this solved: `DEPLOY_SSH_KEY` used to be an unrestricted shell key
 for `mark`, and `mark` has `NOPASSWD: ALL` sudo. So that one Actions secret was
@@ -67,7 +66,7 @@ What was done: the deploy key was rotated, and the new one is locked to exactly
 one capability (write into the web root, nothing else). Current state:
 
 - `~/.ssh/authorized_keys` on the server has two lines:
-  1. your personal key (`mark@Mark.localdomain`), unrestricted, unchanged.
+  1. the personal key (`mark@Mark.localdomain`), unrestricted, unchanged.
   2. the CI key (`gh-actions-deploy-nharc-2026-08`), prefixed with
      `command="/usr/bin/rrsync -wo /var/www/nharc"` plus the existing
      `no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding`.
@@ -85,8 +84,8 @@ is rejected). Writes and `--delete` work normally.
 
 So the residual risk is bounded now. A leaked `DEPLOY_SSH_KEY` lets someone
 overwrite the website, which a repo collaborator could already do by committing.
-It doesn't get them the server any more. Note `mark` still has `NOPASSWD: ALL`
-sudo, but that's reachable from your personal key, not from CI.
+It doesn't get them the server any more. `mark` still has `NOPASSWD: ALL` sudo,
+but that's reachable from the personal key, not from CI.
 
 ### Gotcha: you can't test this key from your Mac
 
@@ -96,7 +95,7 @@ Mac using the restricted key fails with `invalid rsync-command syntax or
 options`. That's a client incompatibility and not a misconfiguration. GNU rsync
 (which is what the Actions runner uses) works fine.
 
-`./deploy/deploy.sh` isn't affected, since it authenticates with your personal
+`./deploy/deploy.sh` isn't affected, since it authenticates with the personal
 key, which has no forced command. If you ever do need to exercise the restricted
 key by hand, use a GNU rsync. Easiest is to run it from the server itself, or
 `brew install rsync` and call `/opt/homebrew/bin/rsync` explicitly.
@@ -119,7 +118,7 @@ rm -P /tmp/newkey /tmp/newkey.pub
 ### If you ever need more than this
 
 GitHub → Settings → Environments, with an environment (say `production`) holding
-the `DEPLOY_*` secrets and Required reviewers set to you, plus
+the `DEPLOY_*` secrets and Required reviewers set, plus
 `environment: production` on the `deploy:` job, makes every run pause for your
 approval before the secrets get injected. That costs a click per deploy
 *including every CMS edit*, which is too much friction for this site. Noted only
@@ -127,7 +126,7 @@ in case the threat model changes.
 
 ---
 
-## 3. Browser CMS (Sveltia) login: live
+## 3. Browser CMS (Sveltia) login
 
 The editor is at `/admin/`. It commits edits to `main`, and Actions rebuilds and
 deploys. `config.yml` points at `mark-iid/nharcweb`. There are two ways to sign in,
@@ -204,9 +203,9 @@ featured-events block in `src/pages/index.astro`.
 
 ---
 
-## 4. Domain cutover (done, nharc.org is live)
+## 4. Domain cutover (Aug 2026)
 
-Cutover finished in Aug 2026. `nharc.org` is the live canonical site with a
+`nharc.org` is the live canonical site with a
 valid Let's Encrypt cert and HSTS. `www.nharc.org`, `nharc.com`, and
 `www.nharc.com` all 301-redirect to it. `newweb.nharc.org` is kept around as a
 preview host. The Caddyfile, `astro.config.mjs` (`site`), `public/robots.txt`,
@@ -217,7 +216,7 @@ CMS login moved to nharc.org/admin at the same time. The OAuth App callback,
 `/etc/nharc-oauth.env` are all `https://nharc.org` now. Editors use
 nharc.org/admin.
 
-The steps below are kept for reference and for the DNS record values.
+The steps taken, kept for the DNS record values:
 
 1. Add the real domains to Caddy. Edit `deploy/Caddyfile` so the site block
    covers all three hostnames:
@@ -232,7 +231,7 @@ The steps below are kept for reference and for the DNS record values.
    scp deploy/Caddyfile mark@newweb.nharc.org:/tmp/Caddyfile
    ssh mark@newweb.nharc.org 'sudo mv /tmp/Caddyfile /etc/caddy/Caddyfile && sudo systemctl reload caddy'
    ```
-2. Point DNS at this box. At your DNS host:
+2. Point DNS at this box:
    - `nharc.org` → A `66.207.135.7`
    - `www.nharc.org` → A `66.207.135.7` (or CNAME to `nharc.org`)
 
@@ -255,7 +254,7 @@ this box touches it, so the cutover was purely a DNS change you control.
 
 ---
 
-## 5. Content that needs a human to verify
+## 5. Content still to verify
 
 Some of the old site's content was clearly dated. Confirm and update the
 following, either in the CMS or in the data files:
@@ -287,12 +286,12 @@ following, either in the CMS or in the data files:
       file (club membership, and a separate Repeater Association donation form),
       which matters for section 9.
 
-There are two more PDFs available if you want them: `public/files/In-Magazine.pdf`
-("NHARC in the news") and `public/files/W3EXW-Prologue.pdf`. Neither is linked
-anywhere yet.
+Two more PDFs are in the repo but not linked anywhere:
+`public/files/In-Magazine.pdf` ("NHARC in the news") and
+`public/files/W3EXW-Prologue.pdf`.
 
 Not migrated: the 2009-2012 photo galleries and the old D-STAR news log (mostly
-2010-2019 entries). Say the word if you want any of it brought over or archived.
+2010-2019 entries). Still on the old host if either is ever wanted.
 
 ---
 
@@ -322,7 +321,7 @@ Two old branches are still in git and can be deleted whenever you like:
 
 ---
 
-## 7. WordPress removed (done)
+## 7. WordPress removal (Jul 2026)
 
 The old WordPress stack (Apache, MySQL, PHP, and the WordPress files) has been
 purged. Server memory went from about 47 MB free to about 405 MB free, and Caddy
@@ -341,7 +340,7 @@ discretion.
 
 ---
 
-## 8. Traffic statistics (live, Sep 2026)
+## 8. Traffic statistics (Sep 2026)
 
 Caddy writes a JSON access log, and a nightly systemd timer runs GoAccess over it
 and renders a report at https://nharc.org/stats. There's no JavaScript tracker on
@@ -400,7 +399,7 @@ runaway report dies instead of the site.
 
 ---
 
-## 9. Membership web form (prototype only, Sep 2026)
+## 9. Membership web form (prototype, Sep 2026)
 
 A design preview exists at `/membership/preview`. It's noindex, excluded from the
 sitemap, unlinked from the nav and footer, and the submit button is disabled.

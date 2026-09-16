@@ -1,9 +1,8 @@
 # Sveltia CMS configuration for the NHARC website.
 # Docs: https://github.com/sveltia/sveltia-cms
 #
-# Before this editor can save changes, complete the one-time backend setup in
-# HANDOFF.md:  (1) push this repo to GitHub, (2) set `repo` below to the real
-# org/name, (3) wire up a GitHub OAuth app so editors can log in.
+# The GitHub backend and OAuth login are configured and working. See
+# OPERATIONS.md section 3 for how sign-in is wired and how to add an editor.
 
 backend:
   name: github

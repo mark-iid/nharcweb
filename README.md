@@ -18,7 +18,7 @@ There are two ways to edit content.
 **In the browser.** Club volunteers edit at https://nharc.org/admin/ using
 Sveltia CMS. Sign in with GitHub, make your changes, and saving publishes on its
 own. No code involved. Getting someone editor access means adding their GitHub
-account to the repo (see [HANDOFF.md](HANDOFF.md) section 3).
+account to the repo (see [OPERATIONS.md](OPERATIONS.md) section 3).
 
 **In the files.** Everything is plain text and can be edited directly:
 
@@ -86,6 +86,6 @@ public/
 deploy/         Caddyfile, deploy.sh, oauth-relay.py, stats/
 ```
 
-[HANDOFF.md](HANDOFF.md) has the rest: GitHub and CI setup, how CMS login
+[OPERATIONS.md](OPERATIONS.md) has the rest: GitHub and CI setup, how CMS login
 actually works, the DNS cutover, the traffic stats, and the content that still
 needs somebody to verify it.

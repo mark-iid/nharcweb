@@ -67,7 +67,7 @@ If the relay is down then `/stats` is unreachable, and so is CMS "Sign In with
 GitHub". The report itself is just a file though, so `sudo cat
 /var/www/nharc-stats/index.html` still works over SSH.
 
-Granting and revoking access is the same thing you do for editors (HANDOFF
+Granting and revoking access is the same thing you do for editors (OPERATIONS
 section 3):
 
 ```sh
