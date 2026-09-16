@@ -1,0 +1,251 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import site from '../../data/site.json';
+
+// PROTOTYPE ONLY. This page is noindex and is not linked from the nav or the
+// footer. There is no form handler behind it yet (the site is static), so the
+// form deliberately has no `action` and submitting it does nothing. See the
+// discussion in HANDOFF section 9 before wiring anything up.
+const licenseClasses = ['Technician', 'General', 'Amateur Extra', 'Advanced', 'Novice', 'Not licensed yet'];
+---
+<BaseLayout
+  title="Membership form (preview)"
+  description="Prototype of a web-based membership form."
+  noindex={true}
+>
+  <PageHeader title="Join or Renew" sub={`Dues are ${site.membershipDues} and run January through December.`} />
+  <div class="wrap">
+
+    <div class="callout" style="margin-bottom: 1.6rem; border-left-color: var(--gold-600); background: var(--gold-050);">
+      <p style="margin: 0;">
+        <strong>This is a design preview.</strong> Nothing is submitted or emailed yet (the
+        form has no handler behind it). It's here so we can look at the layout and
+        decide whether to build the back end.
+      </p>
+    </div>
+
+    <form class="memberform" novalidate>
+      <!--
+        Honeypot. Real people never see this (it's hidden from sight and from
+        screen readers, and taken out of the tab order); bots fill in every
+        field they find. A submission with this non-empty gets dropped.
+      -->
+      <div class="hp" aria-hidden="true">
+        <label for="website">Website</label>
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+      </div>
+      <!-- Time trap: anything returned within a few seconds of load is a bot. -->
+      <input type="hidden" name="rendered_at" value="" />
+
+      <fieldset>
+        <legend>What are you doing today?</legend>
+        <div class="radio-row">
+          <label class="radio"><input type="radio" name="kind" value="new" checked /> <span>Joining as a new member</span></label>
+          <label class="radio"><input type="radio" name="kind" value="renew" /> <span>Renewing my membership</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>About you</legend>
+
+        <div class="field-row">
+          <div class="field grow">
+            <label for="name">Name <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="name" name="name" autocomplete="name" required />
+          </div>
+          <div class="field callsign-field">
+            <label for="callsign">Callsign</label>
+            <input type="text" id="callsign" name="callsign" autocomplete="off"
+                   spellcheck="false" placeholder="W3EXW" />
+            <p class="hint">Leave blank if you're not licensed yet, you're still welcome.</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="licenseClass">License class</label>
+          <select id="licenseClass" name="licenseClass">
+            <option value="">Select…</option>
+            {licenseClasses.map((c) => <option value={c}>{c}</option>)}
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="arrl">ARRL member?</label>
+          <div class="radio-row">
+            <label class="radio"><input type="radio" name="arrl" value="yes" /> <span>Yes</span></label>
+            <label class="radio"><input type="radio" name="arrl" value="no" checked /> <span>No</span></label>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>How we reach you</legend>
+
+        <div class="field">
+          <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
+          <input type="email" id="email" name="email" autocomplete="email" required />
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="phoneHome">Home phone</label>
+            <input type="tel" id="phoneHome" name="phoneHome" autocomplete="tel" />
+          </div>
+          <div class="field">
+            <label for="phoneCell">Cell phone</label>
+            <input type="tel" id="phoneCell" name="phoneCell" autocomplete="tel" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="address">Street address</label>
+          <input type="text" id="address" name="address" autocomplete="street-address" />
+        </div>
+
+        <div class="field-row">
+          <div class="field grow">
+            <label for="city">City / Post office</label>
+            <input type="text" id="city" name="city" autocomplete="address-level2" />
+          </div>
+          <div class="field state-field">
+            <label for="state">State</label>
+            <input type="text" id="state" name="state" maxlength="2" autocomplete="address-level1" placeholder="PA" />
+          </div>
+          <div class="field zip-field">
+            <label for="zip">ZIP</label>
+            <input type="text" id="zip" name="zip" inputmode="numeric" autocomplete="postal-code" placeholder="15237" />
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Anything else?</legend>
+        <div class="field">
+          <label for="notes">Notes for the treasurer <span class="optional">(optional)</span></label>
+          <textarea id="notes" name="notes" rows="3"
+                    placeholder="Family membership, a name change, how you're paying, anything we should know."></textarea>
+        </div>
+      </fieldset>
+
+      <div class="callout info">
+        <p style="margin: 0 0 0.5rem;"><strong>This form doesn't take payment.</strong></p>
+        <p style="margin: 0;">
+          Send your {site.membershipDues} separately, whichever way suits you: by Zelle to
+          <a href={`mailto:${site.bankEmail}`}>{site.bankEmail}</a> (put your name and
+          callsign in the memo), by check to {site.mailingAddress.line1},
+          {site.mailingAddress.city}, {site.mailingAddress.state} {site.mailingAddress.zip},
+          or in person at any meeting.
+        </p>
+      </div>
+
+      <div class="btn-row form-actions">
+        <button type="submit" class="btn" disabled>Send to the treasurer</button>
+        <a class="btn ghost" href="/files/Membership-form.pdf">Prefer paper? Download the PDF</a>
+      </div>
+      <p class="hint disabled-note">
+        The submit button is switched off in this preview.
+      </p>
+    </form>
+
+  </div>
+</BaseLayout>
+
+<style>
+  .memberform { max-width: 46rem; margin: 0 0 2.5rem; }
+
+  fieldset {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.2rem 1.3rem;
+    margin: 0 0 1.4rem;
+    background: var(--bg);
+  }
+  legend {
+    font-family: var(--display);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--green);
+    padding: 0 0.45rem;
+  }
+
+  .field { margin-bottom: 0.95rem; }
+  .field:last-child { margin-bottom: 0; }
+
+  /* Fields sit side by side on a roomy screen and stack on a phone. */
+  .field-row { display: flex; flex-wrap: wrap; gap: 0 1rem; }
+  .field-row .field { flex: 1 1 12rem; }
+  .field-row .grow { flex: 2 1 16rem; }
+  .field-row .state-field { flex: 0 0 5rem; }
+  .field-row .zip-field { flex: 0 0 8rem; }
+  .callsign-field { flex: 1 1 11rem; }
+
+  label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.93rem;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+  }
+  .req { color: var(--green-700); }
+  .optional { font-weight: 400; color: var(--muted); }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  select,
+  textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font: inherit;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid #c6d2c0;
+    border-radius: 8px;
+    padding: 0.55rem 0.7rem;
+  }
+  textarea { resize: vertical; }
+
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 1px;
+    border-color: var(--green-700);
+  }
+
+  #callsign { text-transform: uppercase; font-family: var(--mono); letter-spacing: 0.04em; }
+  #state { text-transform: uppercase; }
+
+  .radio-row { display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; }
+  .radio { display: flex; align-items: center; gap: 0.45rem; font-weight: 400; margin: 0; }
+  .radio input { accent-color: var(--green); }
+
+  .hint { font-size: 0.85rem; color: var(--muted); margin: 0.3rem 0 0; }
+
+  .form-actions { margin-top: 1.5rem; align-items: center; }
+  .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+  .disabled-note { margin-top: 0.6rem; }
+
+  /* Honeypot: off-screen rather than display:none, since some bots skip
+     fields that are outright hidden. */
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  @media (max-width: 640px) {
+    .field-row { display: block; }
+    .field-row .field { margin-bottom: 0.95rem; }
+  }
+</style>
+
+<script>
+  // Stamps load time so a handler could reject anything submitted implausibly
+  // fast. Here purely to show the shape of it.
+  const t = document.querySelector('input[name="rendered_at"]');
+  if (t instanceof HTMLInputElement) t.value = String(Date.now());
+</script>

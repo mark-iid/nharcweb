@@ -9,7 +9,12 @@ export default defineConfig({
   build: {
     format: 'directory',
   },
-  // Keep the members-area placeholder out of the sitemap (it's also noindex).
-  // Precise match so /membership is NOT affected.
-  integrations: [sitemap({ filter: (page) => !/\/members\/?$/.test(page) })],
+  // Keep noindex pages out of the sitemap: the members-area placeholder, and
+  // the membership form design preview. Both are precise matches so the real
+  // /membership page is NOT affected.
+  integrations: [
+    sitemap({
+      filter: (page) => !/\/members\/?$/.test(page) && !/\/membership\/preview\/?$/.test(page),
+    }),
+  ],
 });
