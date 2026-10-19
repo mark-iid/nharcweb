@@ -1,8 +1,9 @@
 ---
 title: Antenna Party
 date: 2026-08-20T18:00:00
+endDate: ''
 location: Hackers Guild, 2247 Babcock Blvd, Pittsburgh PA 15237
-featured: true
+featured: false
 draft: false
 ---
 
