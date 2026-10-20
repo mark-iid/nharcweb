@@ -1,7 +1,8 @@
 ---
-// Small auto-crossfading photo strip of club life. Pure CSS — each slide fades
-// in on a staggered delay across one shared cycle. Freezes on the first image
-// when the visitor prefers reduced motion.
+// Small auto-crossfading photo strip of club life. The crossfade is pure CSS: each
+// slide fades in on a staggered delay across one shared cycle. A tiny inline script
+// shuffles the order on each visit (without JS the order below is kept). Freezes on
+// the first image when the visitor prefers reduced motion.
 const slides = [
   { src: '/images/club/club-1.webp', alt: 'A young operator works HF at a club field event' },
   { src: '/images/club/club-2.webp', alt: 'Members work amateur satellites with a handheld beam antenna' },
@@ -9,6 +10,9 @@ const slides = [
   { src: '/images/club/club-4.webp', alt: 'Club members at the annual holiday dinner' },
   { src: '/images/club/club-5.webp', alt: 'Members at a club meeting' },
   { src: '/images/club/club-6.webp', alt: 'Setting up radio gear at a park pavilion' },
+  { src: '/images/club/club-7.webp', alt: 'Members gather around a portable station at a picnic table in the park' },
+  { src: '/images/club/club-8.webp', alt: 'A portable vertical antenna with orange radials beside a park pavilion' },
+  { src: '/images/club/club-9.webp', alt: 'A smiling operator at a portable go-box station' },
 ];
 ---
 <div class="club-slideshow" role="group" aria-label="Photos from around the club">
@@ -25,6 +29,23 @@ const slides = [
     />
   ))}
 </div>
+<script is:inline>
+  // Inline and synchronous, so it runs before first paint and the unshuffled first
+  // slide never flashes. Reordering the nodes keeps :first-child (the reduced-motion
+  // still) in step with the shuffle.
+  (() => {
+    const box = document.querySelector('.club-slideshow');
+    const slides = [...box.children];
+    for (let i = slides.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [slides[i], slides[j]] = [slides[j], slides[i]];
+    }
+    slides.forEach((s, i) => {
+      s.style.setProperty('--i', i);
+      box.append(s);
+    });
+  })();
+</script>
 
 <style>
   .club-slideshow {
@@ -43,16 +64,18 @@ const slides = [
     object-fit: cover;
     opacity: 0;
     will-change: opacity;
-    animation: clubFade 36s linear infinite;
+    animation: clubFade 54s linear infinite;
     animation-delay: calc(var(--i) * 6s);
   }
-  /* Each of the 6 slides is fully shown for ~5s of the 36s cycle, with a ~0.6s crossfade. */
+  /* Each of the 9 slides is fully shown for ~5s of the 54s cycle, with a ~0.6s crossfade.
+     Adding or removing a slide means retuning these: cycle = 6s x count, and the stops
+     sit at 0.58s, 5.4s and 6.48s into it. */
   @keyframes clubFade {
-    0%   { opacity: 0; }
-    1.6% { opacity: 1; }
-    15%  { opacity: 1; }
-    18%  { opacity: 0; }
-    100% { opacity: 0; }
+    0%    { opacity: 0; }
+    1.07% { opacity: 1; }
+    10%   { opacity: 1; }
+    12%   { opacity: 0; }
+    100%  { opacity: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
     .club-slide { animation: none; }
