@@ -6,6 +6,10 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://nharc.org',
   trailingSlash: 'ignore',
+  // Astro 7 defaults to 'jsx', which drops the space at a line break before an
+  // inline element ("or\n<strong>131.8 Hz</strong>" renders as "or131.8 Hz").
+  // true is the lossless compression Astro 5 used.
+  compressHTML: true,
   build: {
     format: 'directory',
   },
