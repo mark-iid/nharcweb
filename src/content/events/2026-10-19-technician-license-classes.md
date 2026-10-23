@@ -1,5 +1,5 @@
 ---
-title: Technician License Classes
+title: Technician License Classes Intro
 date: 2026-10-22T18:00
 endDate: ''
 location: Hacker's Guild on Babcock Blvd
