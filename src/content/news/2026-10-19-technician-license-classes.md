@@ -2,7 +2,7 @@
 title: Technician License Classes
 date: 2026-10-18T22:08
 summary: If you live in the Pittsburgh area and would like to become an Amateur Radio operator, the North Hills Amateur Radio Club (NHARC) is offering Technician License classes at the Hackers Guild beginning Thursday, October 22, from 6 pm to 9 pm.  This is a 5 week session with the test being given week 5.
-pinned: true
+pinned: false
 draft: false
 ---
 
