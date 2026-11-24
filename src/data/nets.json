@@ -12,7 +12,7 @@
       "name": "Western PA D-STAR Net",
       "day": "Monday",
       "time": "9:00 PM",
-      "repeater": "W3EXW 146.82 and W3PGH 444.35",
+      "repeater": "W3EXW C 146.82 and W3PGH B 444.35",
       "extra": "Linked to reflector REF063C",
       "notes": "Running since July 2012 for D-STAR operators"
     },
@@ -20,7 +20,7 @@
       "name": "Western PA 220 Weekly Net",
       "day": "Monday",
       "time": "7:00 PM",
-      "repeater": "W3EXW 224.100 / W3PGH 223.980 / K3PSG 224.980",
+      "repeater": "W3EXW 224.100 {88.5} / W3PGH 223.980 {131.8} / K3PSG 224.980 / W3KWH 224.48 {131.8}",
       "extra": "",
       "notes": "220 net for Western PA. Also on AllStarLink node #29370"
     }
